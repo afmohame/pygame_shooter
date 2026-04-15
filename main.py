@@ -1,7 +1,8 @@
 import pygame
+import spritesheet
+import power_ups
 
 pygame.init()
-
 #-----------------------------------------------
 #                   CLASSEN
 #-----------------------------------------------
@@ -9,34 +10,6 @@ class Position():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-
-def get_image(sheet, width, height):
-    pass
-
-class Sprites(pygame.sprite.Sprite):
-    def __init__(self, *groups):
-        super().__init__(*groups)
-
-class Power_ups():
-    def __init__(self, duration, drop_rate):
-        self.duration = duration
-        self.drop_rate = drop_rate
-
-class Shield(Power_ups): #misschien HP i.p.v duration
-    def __init__(self, duration):
-        super().__init__(duration)
-
-class Speed_boost(Power_ups):
-    def __init__(self, duration, multiplier):
-        super().__init__(duration)
-
-class Rapid_fire(Power_ups):
-    def __init__(self, duration, multiplier):
-        super().__init__(duration)
-
-class Health_regain(Power_ups):
-    def __init__(self, duration, regain_HP):
-        super().__init__(duration)
 
 class Character(Position):
     def __init__(self, x, y, HP, defense, speed, width, height, color):
@@ -48,8 +21,12 @@ class Character(Position):
         self.height = height
         self.color = color    
 
-    def draw(self):
+    def draw(self, image, sprite_width, sprite_height):
+        player_sheet_img = spritesheet.Sprites(image)
+        frame_0 = player_sheet_img.get_image(0, sprite_width, sprite_height, 3, black) #each image is 46 width and 55 height
+        #frame_4 = player_sheet_img.get_image(4,  46, 55, 3, black)
         pygame.draw.rect(screen, self.color, rect=(self.x, self.y, self.width, self.height))
+        return frame_0
 
 class Player(Character):
     def __init__(self, x, y, HP, defense, speed, width, height, color, stamina, power_up = (None, None)):
@@ -75,10 +52,10 @@ class Player(Character):
 
 class Enemies(Character):
     def __init__(self, HP, defense, speed):
-        super().__init__(HP, defense, speed)
+        #super().__init__(HP, defense, speed)
         pass
 
-class Weapons(Player):
+class Weapons():
     def __init__(self, shooting_power, drop_rate, type, image, bullet_count = None):
         self.shooting_power = shooting_power
         self.drop_rate = drop_rate
@@ -91,28 +68,38 @@ class Weapons(Player):
 #SCREEN
 screen_w = 1500 #breedte scherm
 screen_h = 900 #hoogte scherm
-fps = 30 
+fps = 60 
 screen = pygame.display.set_mode((screen_w, screen_h))
 clock = pygame.time.Clock()
+black = (0, 0, 0)
+bg = (100, 100, 100) #background
+
+#SPRITES
+sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
+gun1 = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.png").convert_alpha() 
+player_sprite_width, player_sprite_height = 20, 23
+#with or without convert_alpha it still works--> better performance?
 
 #CHARACTERS
 list_of_players, list_of_sprites = [], []
 xpos, ypos, spd, width, height = 50, 50, 2, 40, 65
 player = Player(x=xpos, y=ypos, HP=60, defense=10, speed=spd, width=width, height=height, color=(255, 0, 0), stamina=10, power_up=(None, None))
 speedx, speedy = 2, 2
-gun1 = pygame.image.load("sprites/images/enemy1_gun.png").convert_alpha() #with or without convert_alpha it still works--> better performance?
-player_sprite = pygame.image.load().convert_alpha()
+
 #-----------------------------------------------
 #                MAIN GAME LOOP
 #-----------------------------------------------
 list_of_players.append(player)
 run = True
 while run:
-    screen.fill((100, 100, 100)) #can't be deleted it refreshes the screen.
+    screen.fill(bg) #can't be deleted it refreshes the screen.
     screen.blit(gun1, (player.x+width, player.y+height/2.5))#puts a surface on another surface
+    #screen.blit(frame_0, (250, 250))
+    #screen.blit(frame_4, (300, 300))
+    #screen.blit(sprite_player, (250, 250))#This shows the whole sprite sheet
     if player in list_of_players:
         if hasattr(player, "draw"):
-            player.draw()
+            screen.blit(player.draw(sprite_player, player_sprite_width, player_sprite_height), (player.x, player.y))
         if hasattr(player, "moving"):
             player.moving(speedx, speedy)
         if hasattr(player, "toggle"):
@@ -123,6 +110,6 @@ while run:
             run = False
 
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(fps)
 
 pygame.quit()

@@ -6,4 +6,5 @@ Zet hier jouw rol. Eigenlijk wat je gaat doen.
 
 Mohamed Afakkir contributies:
 - Power-ups
-- Player
+- Player/Character (niet enemies)
+- Sprites/spritesheet (niet enemies)
