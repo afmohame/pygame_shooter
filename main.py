@@ -4,42 +4,36 @@ import power_ups
 
 pygame.init()
 #-----------------------------------------------
-#                   CLASSEN
+#                   KLASSEN
 #-----------------------------------------------
-class Position():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-class Character(Position):
-    def __init__(self, x, y, HP, defense, speed, width, height, color, sprite_sheet):
-        super().__init__(x, y)
-        self.HP = HP
+class Character():
+    def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, hitbox_color, sprite_sheet):
+        self.x, self.y = x, y
+        self.hp = hp
         self.defense = defense
         self.speed = speed
-        self.width = width
-        self.height = height
-        self.color = color    
-        self.img_sprite = sprite_sheet
+        self.hitbox_width = hitbox_width 
+        self.hitbox_height = hitbox_height 
+        self.hitbox_color = hitbox_color  #temporary
+        self.sprite_sheet = spritesheet.Sprites(sprite_sheet)
     
-    def extract_sprite(self):
-        self.char_sprite = spritesheet.Sprites(self.img_sprite)
+    def make_sprite(self, transparancy_color, scale, frame_index, column_index, first_x, first_y, x_space, y_space):
+        self.scale = scale
         #0 is the frame I want to use, width/height is  the height of the sprites box, scale is multiplier to make it bigger
-        self.image = self.char_sprite.get_image(0, self.width, self.height, 3, black) 
+        self.image = self.sprite_sheet.slice_sheet(frame_index, column_index, first_x, first_y, self.hitbox_width, self.hitbox_height, scale, 
+                                                   transparancy_color, x_space, y_space)
 
-    '''def animation(self):
-        self.animation_list = []
-        self.animation_steps = 5 #how many images per task
-        #for loop to iterate 
-        Work in progress'''
-
-    def draw(self):
-        pygame.draw.rect(screen, self.color, rect=(self.x, self.y, self.width*3, self.height*3))
+    def get_sprite(self):
         return self.image
+    
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.hitbox_color, rect=(self.x, self.y, (self.hitbox_width)*self.scale, 
+                                                           (self.hitbox_height)*self.scale))
+        
 
 class Player(Character):
-    def __init__(self, x, y, HP, defense, speed, width, height, color, sprite_sheet, stamina, power_up = (None, None)):
-        super().__init__(x, y, HP, defense, speed, width, height, color, sprite_sheet)
+    def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, hitbox_color, sprite_sheet, stamina, power_up = (None, None)):
+        super().__init__(x, y, hp, defense, speed, hitbox_width, hitbox_height, hitbox_color, sprite_sheet)
         self.stamina = stamina
         self.power_up1 = power_up[0]
         self.power_up2 = power_up[1]
@@ -55,66 +49,108 @@ class Player(Character):
             self.x -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.x += self.speed
-    #geen idee hoe dit implementeren
+    """geen idee hoe dit implementeren
     #def toggle_powerups(self):
-    #    pass
+        pass"""
 
 class Enemies(Character):
-    def __init__(self, HP, defense, speed):
-        #super().__init__(HP, defense, speed)
+    def __init__(self, hp, defense, speed):
+        #super().__init__(hp, defense, speed)
         pass
 
 class Weapons():
-    def __init__(self, shooting_power, drop_rate, type, image, bullet_count = None):
+    def __init__(self, shooting_power, drop_rate, kind, image, bullet_count = None):
         self.shooting_power = shooting_power
         self.drop_rate = drop_rate
-        self.type = type
+        self.kind = kind
+        self.image = image
         self.bullet_count = bullet_count
+    
+    def moving_with_cursor(self):
+        pass
 
 #-----------------------------------------------
-#                  CONSTANTE
+#                  constants
 #-----------------------------------------------
-player_sprite_width, player_sprite_height = 20, 23
-xpos, ypos, spd, width, height = 50, 50, 2, 40, 65
-list_of_players, list_of_sprites = [], []
-standing_front, standing_back, standing_side, running_front, running_back, running_side = 0, 2, 1, 3, 5, 4
-dead = 9
-#SCREEN
-screen_w, screen_h = 1500, 900 #breedte scherm, hoogte scherm
-fps = 60 
-screen = pygame.display.set_mode((screen_w, screen_h))
-clock = pygame.time.Clock()
+# screen
+screen_w = 1500
+screen_h = 900
+fps = 60
 black = (0, 0, 0)
-bg = (100, 100, 100) #background
+bg = (100, 100, 100)
+clock = pygame.time.Clock()
+screen = pygame.display.set_mode((screen_w, screen_h))
 
-#SPRITES
+# player
+player_sprite_width = 14
+player_sprite_height = 21
+xpos = 0
+ypos = 0
+hp = 30
+defense = 10
+spd = 2
+hitbox_width = 40
+hitbox_height = 65
+hitbox_color = (255, 0, 0)
+stamina = 10
+# animation frames
+standing_front = 0
+standing_side = 1
+standing_back = 2
+running_front = 3
+running_side = 4
+running_back = 5
+dead = 9
+
+# sprite state
+frame_index = 0
+column_index = 0
+first_x, x_space = 2, 48
+first_y, y_space = 0, 48
+scale = 2.5
 sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
 gun1 = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.png").convert_alpha() 
-#with or without convert_alpha it still works--> better performance?
 
-#CHARACTERS
-player = Player(xpos, ypos, 60, 10, spd, player_sprite_width, player_sprite_height, (255, 0, 0), sprite_player, 10, (None, None))
-player.extract_sprite()
 
+#OTHERS
+list_of_players, list_of_guns = [], []
+player = Player(
+    xpos, ypos, hp, defense, spd,
+    player_sprite_width, player_sprite_height,
+    hitbox_color, sprite_player, stamina, (None, None)
+)
+
+weapon_x = player_sprite_width+15
+weapon_y = player_sprite_height+5
 
 #-----------------------------------------------
 #                MAIN GAME LOOP
 #-----------------------------------------------
+
+player.make_sprite(black, scale, frame_index, column_index, first_x, first_y, x_space, y_space)
 list_of_players.append(player)
 run = True
 while run:
     screen.fill(bg) #can't be deleted it refreshes the screen.
-    #screen.blit(frame_0, (250, 250))
-    #screen.blit(frame_4, (300, 300))
-    #screen.blit(sprite_player, (250, 250))#This shows the whole sprite sheet
-    if player in list_of_players:
-        if hasattr(player, "draw"):
-            screen.blit(player.draw(), (player.x, player.y))
-            screen.blit(gun1, (player.x+width, player.y+height/2.5))#puts a surface on another surface
-        if hasattr(player, "moving"):
-            player.moving()
-        if hasattr(player, "toggle"):
-            pass # player.toggle()
+    for character in list_of_players:
+        character.draw(screen)
+        #puts a surface on another surface
+        screen.blit(gun1, (character.x + weapon_x, character.y + weapon_y))
+        screen.blit(character.get_sprite(), (character.x, character.y))
+        character.moving()
+        # player.toggle()
+        #the ifs are not needed don't know why we should use them
+        """
+        if hasattr(character, "draw"):
+            character.draw(screen)
+            #puts a surface on another surface
+            screen.blit(gun1, (character.x + weapon_x, character.y + weapon_y))
+        if hasattr(character, "get_sprite"):
+            screen.blit(character.get_sprite(), (character.x, character.y))
+        if hasattr(character, "moving"):
+            character.moving()
+        if hasattr(character, "toggle"):
+            pass # player.toggle()"""
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
