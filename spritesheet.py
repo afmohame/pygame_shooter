@@ -4,6 +4,8 @@ class Sprites(pygame.sprite.Sprite):
     def __init__(self, image):#groups may be added but don't know what it does 
         #super().__init__(*groups)
         self.sheet = image
+        self.xpace = 33 #temporary for player
+        self.yspace = 25 #temporary for player
 
     def get_image(self, frame, width, height, scale, color, x_space = None, yspace = None):
         image = pygame.Surface((width, height)).convert_alpha()
