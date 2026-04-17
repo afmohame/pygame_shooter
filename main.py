@@ -7,24 +7,30 @@ pygame.init()
 #                   KLASSEN
 #-----------------------------------------------
 class Character():
-    def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, hitbox_color, sprite_sheet):
+    def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, sprite_player_width, sprite_player_height, hitbox_color, sprite_sheet, 
+                 scale, animation_steps, column_index):
         self.x, self.y = x, y
         self.hp = hp
         self.defense = defense
         self.speed = speed
-        self.hitbox_width = hitbox_width 
+        self.sprite_player_width = sprite_player_width 
+        self.sprite_player_height = sprite_player_height
+        self.hitbox_width = hitbox_width
         self.hitbox_height = hitbox_height 
         self.hitbox_color = hitbox_color  #temporary
         self.sprite_sheet = spritesheet.Sprites(sprite_sheet)
-    
-    def make_sprite(self, transparancy_color, scale, frame_index, column_index, first_x, first_y, x_space, y_space):
         self.scale = scale
+        self.animation_steps = animation_steps
+        self.column_index = column_index
+        self.animation_seq = []
+            
+    def make_animation(self, transparancy_color, first_x, first_y, x_space, y_space, column_length):
         #0 is the frame I want to use, width/height is  the height of the sprites box, scale is multiplier to make it bigger
-        self.image = self.sprite_sheet.slice_sheet(frame_index, column_index, first_x, first_y, self.hitbox_width, self.hitbox_height, scale, 
-                                                   transparancy_color, x_space, y_space)
-
-    def get_sprite(self):
-        return self.image
+        self.animation_seq = self.sprite_sheet.animation(self.animation_steps, self.column_index, first_x, first_y, self.sprite_player_width, 
+                                                         self.sprite_player_height, self.scale, transparancy_color, x_space, y_space, column_length)
+    def get_animation(self, frame):
+        self.length_animation_list = len(self.animation_seq) 
+        return self.animation_seq[frame]
     
     def draw(self, surface):
         pygame.draw.rect(surface, self.hitbox_color, rect=(self.x, self.y, (self.hitbox_width)*self.scale, 
@@ -32,26 +38,33 @@ class Character():
         
 
 class Player(Character):
-    def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, hitbox_color, sprite_sheet, stamina, power_up = (None, None)):
-        super().__init__(x, y, hp, defense, speed, hitbox_width, hitbox_height, hitbox_color, sprite_sheet)
+    def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, sprite_player_width, sprite_player_height, hitbox_color, sprite_sheet, 
+                 scale, frame_index, column_index, stamina, power_up = (None, None)):
+        super().__init__(x, y, hp, defense, speed, hitbox_width, hitbox_height, sprite_player_width, sprite_player_height, hitbox_color, sprite_sheet, scale,
+                        frame_index, column_index)
         self.stamina = stamina
         self.power_up1 = power_up[0]
         self.power_up2 = power_up[1]
     
-    
-    def moving(self):
+    #need to find a way to put it in character class
+    def moving(self, running_up, running_down, running_right, running_left):
         keys = pygame.key.get_pressed()
+        self.column_index = 0 #column index for resting sprite
         if keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.column_index = running_up
             self.y -= self.speed
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            self.column_index = running_down
             self.y += self.speed
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.column_index = running_left
             self.x -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.column_index = running_right
             self.x += self.speed
-    """geen idee hoe dit implementeren
-    #def toggle_powerups(self):
-        pass"""
+
+    def toggle_powerups(self):
+        pass
 
 class Enemies(Character):
     def __init__(self, hp, defense, speed):
@@ -82,75 +95,87 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_w, screen_h))
 
 # player
-player_sprite_width = 14
-player_sprite_height = 21
+sprite_player_width = 14
+sprite_player_height = 21
 xpos = 0
 ypos = 0
 hp = 30
 defense = 10
 spd = 2
-hitbox_width = 40
+hitbox_width = 40 
 hitbox_height = 65
 hitbox_color = (255, 0, 0)
 stamina = 10
+
 # animation frames
 standing_front = 0
 standing_side = 1
 standing_back = 2
-running_front = 3
-running_side = 4
-running_back = 5
+running_down = 3
+running_right, running_left = 4, -4
+running_up = 5
 dead = 9
-
-# sprite state
-frame_index = 0
 column_index = 0
 first_x, x_space = 2, 48
 first_y, y_space = 0, 48
 scale = 2.5
+column_length = 255
+
+# sprite state
 sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
 gun1 = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.png").convert_alpha() 
+last_update = pygame.time.get_ticks()
+animation_cooldown = 100 #miliseconds
+frame = 0 
 
+#create animation list
+animation_list = []
+animation_steps = 6 #there are 6 sprites for each animation
 
 #OTHERS
 list_of_players, list_of_guns = [], []
 player = Player(
-    xpos, ypos, hp, defense, spd,
-    player_sprite_width, player_sprite_height,
-    hitbox_color, sprite_player, stamina, (None, None)
+    xpos, ypos, hp, defense, spd, hitbox_width, hitbox_height,
+    sprite_player_width, sprite_player_height,
+    hitbox_color, sprite_player, scale, animation_steps,
+    column_index, stamina, (None, None)
 )
 
-weapon_x = player_sprite_width+15
-weapon_y = player_sprite_height+5
+player2 = Player(
+    xpos+50, ypos+57, hp, defense, spd, hitbox_width, hitbox_height,
+    sprite_player_width, sprite_player_height,
+    hitbox_color, sprite_player, scale, animation_steps,
+    column_index, stamina, (None, None)
+)
+
+weapon_x = sprite_player_width+15
+weapon_y = sprite_player_height+5
 
 #-----------------------------------------------
 #                MAIN GAME LOOP
 #-----------------------------------------------
-
-player.make_sprite(black, scale, frame_index, column_index, first_x, first_y, x_space, y_space)
 list_of_players.append(player)
+list_of_players.append(player2)
 run = True
 while run:
     screen.fill(bg) #can't be deleted it refreshes the screen.
+
+    #update animation
+    current_time = pygame.time.get_ticks()#for animation tracks time passed
+    if current_time - last_update >= animation_cooldown:
+        frame += 1
+        last_update = current_time
+        if frame >= 6:#len(animation_list):
+            frame = 0
+
     for character in list_of_players:
-        character.draw(screen)
-        #puts a surface on another surface
-        screen.blit(gun1, (character.x + weapon_x, character.y + weapon_y))
-        screen.blit(character.get_sprite(), (character.x, character.y))
-        character.moving()
-        # player.toggle()
-        #the ifs are not needed don't know why we should use them
-        """
-        if hasattr(character, "draw"):
-            character.draw(screen)
-            #puts a surface on another surface
-            screen.blit(gun1, (character.x + weapon_x, character.y + weapon_y))
-        if hasattr(character, "get_sprite"):
-            screen.blit(character.get_sprite(), (character.x, character.y))
-        if hasattr(character, "moving"):
-            character.moving()
-        if hasattr(character, "toggle"):
-            pass # player.toggle()"""
+        #character.draw(screen)#draws a hitbox in red
+        character.moving(running_up, running_down, running_right, running_left)
+        character.make_animation(black, first_x, first_y, x_space, y_space, column_length)
+        screen.blit(character.get_animation(frame), (character.x, character.y))#puts character on screen which is a surface
+        screen.blit(gun1, (character.x + weapon_x, character.y + weapon_y))#puts gun on screen which is a surface
+        #if hasattr(character, "toggle_powerups"):
+            #character.toggle_powerups()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
