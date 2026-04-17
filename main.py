@@ -6,10 +6,14 @@ pygame.init()
 #-----------------------------------------------
 #                   KLASSEN
 #-----------------------------------------------
-class Character():
+class Position():
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+class Character(Position):
     def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, sprite_player_width, sprite_player_height, hitbox_color, sprite_sheet, 
                  scale, animation_steps, column_index):
-        self.x, self.y = x, y
+        super().__init__(x, y)
         self.hp = hp
         self.defense = defense
         self.speed = speed
@@ -46,7 +50,7 @@ class Player(Character):
         self.power_up1 = power_up[0]
         self.power_up2 = power_up[1]
     
-    #need to find a way to put it in character class
+    #need to find a way to put it in character class 
     def moving(self, running_up, running_down, running_right, running_left):
         keys = pygame.key.get_pressed()
         self.column_index = 0 #column index for resting sprite
@@ -71,16 +75,23 @@ class Enemies(Character):
         #super().__init__(hp, defense, speed)
         pass
 
-class Weapons():
-    def __init__(self, shooting_power, drop_rate, kind, image, bullet_count = None):
+class Weapons(Position):
+    def __init__(self, x, y, shooting_power, drop_rate, rarity, image, radius, ricochet, bullet_count = None):
+        super().__init__(x, y)
         self.shooting_power = shooting_power
         self.drop_rate = drop_rate
-        self.kind = kind
+        self.rarity = rarity
         self.image = image
+        self.radius = radius
+        self.ricochet = ricochet
         self.bullet_count = bullet_count
     
     def moving_with_cursor(self):
         pass
+
+    def shoot(self):
+        pass
+
 
 #-----------------------------------------------
 #                  constants
@@ -94,6 +105,31 @@ bg = (100, 100, 100)
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_w, screen_h))
 
+# animation frames
+standing_front = 0
+standing_side = 1
+standing_back = 2
+running_down = 3
+running_right, running_left = 4, -4#-4 so it can be identified and mirrored in slice_sheet method inside Sprites class
+running_up = 5
+dead = 9
+column_index = 0
+first_x, x_space = 2, 48
+first_y, y_space = 0, 48
+scale = 2.5
+column_length = 255
+
+# sprite state
+sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
+sprite_revolver = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.png").convert_alpha() 
+last_update = pygame.time.get_ticks()
+animation_cooldown = 100 #miliseconds
+frame = 0 
+
+#create animation list
+animation_list = []
+animation_steps = 6 #there are 6 sprites for each animation
+
 # player
 sprite_player_width = 14
 sprite_player_height = 21
@@ -106,34 +142,6 @@ hitbox_width = 40
 hitbox_height = 65
 hitbox_color = (255, 0, 0)
 stamina = 10
-
-# animation frames
-standing_front = 0
-standing_side = 1
-standing_back = 2
-running_down = 3
-running_right, running_left = 4, -4
-running_up = 5
-dead = 9
-column_index = 0
-first_x, x_space = 2, 48
-first_y, y_space = 0, 48
-scale = 2.5
-column_length = 255
-
-# sprite state
-sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
-gun1 = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.png").convert_alpha() 
-last_update = pygame.time.get_ticks()
-animation_cooldown = 100 #miliseconds
-frame = 0 
-
-#create animation list
-animation_list = []
-animation_steps = 6 #there are 6 sprites for each animation
-
-#OTHERS
-list_of_players, list_of_guns = [], []
 player = Player(
     xpos, ypos, hp, defense, spd, hitbox_width, hitbox_height,
     sprite_player_width, sprite_player_height,
@@ -141,24 +149,32 @@ player = Player(
     column_index, stamina, (None, None)
 )
 
-player2 = Player(
-    xpos+50, ypos+57, hp, defense, spd, hitbox_width, hitbox_height,
-    sprite_player_width, sprite_player_height,
-    hitbox_color, sprite_player, scale, animation_steps,
-    column_index, stamina, (None, None)
-)
+#guns
+radius = sprite_player_height/2
+weapon_x = sprite_player_width/2 
+weapon_y = sprite_player_height/2
+revolver = Weapons(weapon_x, weapon_y, 3, 10, "common", sprite_revolver, radius, 2)
 
-weapon_x = sprite_player_width+15
-weapon_y = sprite_player_height+5
+#OTHERS
+list_of_players, list_of_enemies, list_of_guns = [], [], []
+
 
 #-----------------------------------------------
 #                MAIN GAME LOOP
 #-----------------------------------------------
 list_of_players.append(player)
-list_of_players.append(player2)
+#list_of_players.append(player2)
+list_of_guns.append(revolver)
 run = True
 while run:
     screen.fill(bg) #can't be deleted it refreshes the screen.
+
+    #this block needs to be above other event.type otherwise it does not work 
+    #repeating for event in pygame.event.get() is also not good
+    #for loop does not create a local variable!!
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
 
     #update animation
     current_time = pygame.time.get_ticks()#for animation tracks time passed
@@ -173,14 +189,24 @@ while run:
         character.moving(running_up, running_down, running_right, running_left)
         character.make_animation(black, first_x, first_y, x_space, y_space, column_length)
         screen.blit(character.get_animation(frame), (character.x, character.y))#puts character on screen which is a surface
-        screen.blit(gun1, (character.x + weapon_x, character.y + weapon_y))#puts gun on screen which is a surface
+        for gun in list_of_guns:
+            screen.blit(gun.image, (character.x + gun.radius, character.y + gun.radius))#puts gun on screen which is a surface
         #if hasattr(character, "toggle_powerups"):
             #character.toggle_powerups()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
 
+    if event.type == pygame.MOUSEMOTION:
+        pos = pygame.mouse.get_pos()
+        gun.x = pos[0]
+        gun.y = pos[1]
+        #print(gun.x)
+    if event.type == pygame.MOUSEBUTTONUP:
+        pass        
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        pass  
+
+
+    pygame.display.flip()
     pygame.display.update()
     clock.tick(fps)
 
