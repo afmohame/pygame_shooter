@@ -116,7 +116,7 @@ dead = 9
 column_index = 0
 first_x, x_space = 2, 48
 first_y, y_space = 0, 48
-scale = 2.5
+scale = 3
 column_length = 255
 
 # sprite state
@@ -137,11 +137,11 @@ xpos = 0
 ypos = 0
 hp = 30
 defense = 10
-spd = 2
+spd = 5
 hitbox_width = 40 
 hitbox_height = 65
 hitbox_color = (255, 0, 0)
-stamina = 10
+stamina = scale
 player = Player(
     xpos, ypos, hp, defense, spd, hitbox_width, hitbox_height,
     sprite_player_width, sprite_player_height,
@@ -151,8 +151,8 @@ player = Player(
 
 #guns
 radius = sprite_player_height/2
-weapon_x = sprite_player_width/2 
-weapon_y = sprite_player_height/2
+weapon_x = sprite_player_width*scale
+weapon_y = scale*sprite_player_height/2
 revolver = Weapons(weapon_x, weapon_y, 3, 10, "common", sprite_revolver, radius, 2)
 
 #OTHERS
@@ -189,11 +189,11 @@ while run:
         character.moving(running_up, running_down, running_right, running_left)
         character.make_animation(black, first_x, first_y, x_space, y_space, column_length)
         screen.blit(character.get_animation(frame), (character.x, character.y))#puts character on screen which is a surface
-        for gun in list_of_guns:
-            screen.blit(gun.image, (character.x + gun.radius, character.y + gun.radius))#puts gun on screen which is a surface
         #if hasattr(character, "toggle_powerups"):
             #character.toggle_powerups()
-
+    for gun in list_of_guns:
+            screen.blit(gun.image, (character.x + weapon_x, character.y + weapon_y))#puts gun on screen which is a surface
+        
 
     if event.type == pygame.MOUSEMOTION:
         pos = pygame.mouse.get_pos()
