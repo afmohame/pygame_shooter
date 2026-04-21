@@ -207,7 +207,6 @@ while run:
         pass  
 
 
-    pygame.display.flip()
     pygame.display.update()
     clock.tick(fps)
 

@@ -5,33 +5,46 @@ pg.init()
 screen = pg.display.set_mode((800, 800))
 clock = pg.time.Clock()
 run = True
-angle = 0
-centerx, centery = 400, 400
+
 dx, dy = 400, 400
 width, height = 100, 40
-top_left = (dx, dy)
-top_right = (dx+width, dy)
-bottom_left = (dx, dy+height)
-botom_right = (dx+width, dy+height)
 anchor_mouse = (dx, dy+height)
 d_angle = 0
+radius = 3
+
+rect_surface = pg.Surface((width, height), pg.SRCALPHA)
+rect_screen = pg.draw.rect(rect_surface, (209, 0, 0), (0, 0, width, height))
+
+anchor_surface = pg.Surface((2*radius, 2*radius), pg.SRCALPHA)
+anchor_point = pg.draw.circle(anchor_surface, (0, 0, 200), (radius, radius), radius)
+angle = 0
 while run:
+    screen.fill((0,0,0))
+
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
 
-    if event.type == pg.MOUSEMOTION:
-        mx, my = pg.mouse.get_pos()
-        #print(dx)
-        #print(dy)
+    mx, my = pg.mouse.get_pos()
+    dx, dy = mx - anchor_mouse[0], my - anchor_mouse[1]
+    angle = math.degrees(math.atan2(dy, dx))-d_angle
 
+    rot_rect = pg.transform.rotate(rect_surface, -angle)
 
-    player_pos = screen.get_rect().center
-    pg.draw.rect(screen, (200, 0, 0), (player_pos[0], player_pos[1], width, height))
-    pg.draw.circle(screen, (0, 200, 0), anchor_mouse, 5)
+    offset_x, offset_y = width/2, height/2
+    
+    rad = math.radians(angle)
+    rot_offset_x = offset_x*math.cos(rad) - offset_y*math.sin(rad)
+    rot_offset_y = offset_x*math.sin(rad) + offset_y*math.cos(rad)
+    
+    rect_center_x = anchor_mouse[0] + rot_offset_x
+    rect_center_y = anchor_mouse[1] + rot_offset_y
 
+    rot_rect_screen = rot_rect.get_rect(center=(rect_center_x, rect_center_y))
 
-    pg.display.flip()
+    screen.blit(rot_rect, rot_rect_screen)
+    screen.blit(anchor_surface, (anchor_mouse[0] - radius, anchor_mouse[1] - radius))
+
     pg.display.update()
     clock.tick(60)
 pg.quit()
