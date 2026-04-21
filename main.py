@@ -40,7 +40,6 @@ class Character(Position):
         pygame.draw.rect(surface, self.hitbox_color, rect=(self.x, self.y, (self.hitbox_width)*self.scale, 
                                                            (self.hitbox_height)*self.scale))
         
-
 class Player(Character):
     def __init__(self, x, y, hp, defense, speed, hitbox_width, hitbox_height, sprite_player_width, sprite_player_height, hitbox_color, sprite_sheet, 
                  scale, frame_index, column_index, stamina, power_up = (None, None)):
@@ -76,7 +75,7 @@ class Enemies(Character):
         pass
 
 class Weapons(Position):
-    def __init__(self, x, y, shooting_power, drop_rate, rarity, image, radius, ricochet, bullet_count = None):
+    def __init__(self, x, y, shooting_power, drop_rate, rarity, image, radius, ricochet, center_char, bullet_count = None):
         super().__init__(x, y)
         self.shooting_power = shooting_power
         self.drop_rate = drop_rate
@@ -84,13 +83,17 @@ class Weapons(Position):
         self.image = image
         self.radius = radius
         self.ricochet = ricochet
+        self.center_char = center_char #tuple (x, y)
         self.bullet_count = bullet_count
     
-    def moving_with_cursor(self):
-        pass
+    def Rotate_gun(self, mx, my, angle):
+        self.mx = mx
+        self.my = my
+        self.angle = angle
 
-    def shoot(self):
-        pass
+    def Shoot(self, shoot):
+        if shoot:
+            pass
 
 
 #-----------------------------------------------
@@ -150,10 +153,11 @@ player = Player(
 )
 
 #guns
+center_charx, center_chary = sprite_player_width/2, sprite_player_height/2
 radius = sprite_player_height/2
 weapon_x = sprite_player_width*scale
 weapon_y = scale*sprite_player_height/2
-revolver = Weapons(weapon_x, weapon_y, 3, 10, "common", sprite_revolver, radius, 2)
+revolver = Weapons(weapon_x, weapon_y, 3, 10, "common", sprite_revolver, radius, 2, (center_charx, center_chary))
 
 #OTHERS
 list_of_players, list_of_enemies, list_of_guns = [], [], []
@@ -163,7 +167,6 @@ list_of_players, list_of_enemies, list_of_guns = [], [], []
 #                MAIN GAME LOOP
 #-----------------------------------------------
 list_of_players.append(player)
-#list_of_players.append(player2)
 list_of_guns.append(revolver)
 run = True
 while run:
@@ -189,8 +192,6 @@ while run:
         character.moving(running_up, running_down, running_right, running_left)
         character.make_animation(black, first_x, first_y, x_space, y_space, column_length)
         screen.blit(character.get_animation(frame), (character.x, character.y))#puts character on screen which is a surface
-        #if hasattr(character, "toggle_powerups"):
-            #character.toggle_powerups()
     for gun in list_of_guns:
             screen.blit(gun.image, (character.x + weapon_x, character.y + weapon_y))#puts gun on screen which is a surface
         
@@ -199,7 +200,7 @@ while run:
         pos = pygame.mouse.get_pos()
         gun.x = pos[0]
         gun.y = pos[1]
-        #print(gun.x)
+        print(gun.x)
     if event.type == pygame.MOUSEBUTTONUP:
         pass        
     if event.type == pygame.MOUSEBUTTONDOWN:
