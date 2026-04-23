@@ -8,10 +8,10 @@ run = True
 
 dx, dy = 400, 400
 width, height = 100, 40
-anchor_mouse = (dx, dy+height)
+anchor_mouse = (dx, dy)#this is the point where mouse point to
 d_angle = 0
-radius = 3
-
+radius, orbit_rad = 3, 150
+#pg.SRCALPHA laat toe om transparante pizels te hebben.
 rect_surface = pg.Surface((width, height), pg.SRCALPHA)
 rect_screen = pg.draw.rect(rect_surface, (209, 0, 0), (0, 0, width, height))
 
@@ -26,12 +26,12 @@ while run:
             run = False
 
     mx, my = pg.mouse.get_pos()
-    dx, dy = mx - anchor_mouse[0], my - anchor_mouse[1]
+    dx, dy = mx - anchor_mouse[0], -(my - anchor_mouse[1])
     angle = math.degrees(math.atan2(dy, dx))-d_angle
 
     rot_rect = pg.transform.rotate(rect_surface, -angle)
 
-    offset_x, offset_y = width/2, height/2
+    offset_x, offset_y = orbit_rad, 0
     
     rad = math.radians(angle)
     rot_offset_x = offset_x*math.cos(rad) - offset_y*math.sin(rad)
