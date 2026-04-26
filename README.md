@@ -8,3 +8,4 @@ Mohamed Afakkir contributies:
 - Power-ups
 - Player/Character (niet enemies)
 - Sprites/spritesheet (niet enemies)
+- weapons class
