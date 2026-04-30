@@ -26,7 +26,7 @@ while run:
             run = False
 
     mx, my = pg.mouse.get_pos()
-    dx, dy = mx - anchor_mouse[0], -(my - anchor_mouse[1])
+    dx, dy = mx - anchor_mouse[0], my - anchor_mouse[1]
     angle = math.degrees(math.atan2(dy, dx))-d_angle
 
     rot_rect = pg.transform.rotate(rect_surface, -angle)

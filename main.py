@@ -138,7 +138,7 @@ run = True
 
 anchor_surface = pygame.Surface((radius, radius))
 anchor_point = pygame.draw.circle(anchor_surface, (0, 0, 200), (radius/2, radius/2), radius/2)
-
+shoot = False
 while run:
     screen.fill(bg) #can't be deleted it refreshes the screen.
 
@@ -170,12 +170,11 @@ while run:
         gun.update_mouse_pos(pos_mouse)
         gun.rotate_gun(orbit_xy[0], orbit_xy[1], center_char)
         gun.draw_gun(screen, gun.gun_surf, gun.rot_gun_screen)
-
-    if event.type == pygame.MOUSEBUTTONUP:
-        pass        
+      
     if event.type == pygame.MOUSEBUTTONDOWN:
-        pass  
-
+        shoot = True  
+    if event.type == pygame.MOUSEBUTTONUP:
+        shoot = False
 
     pygame.display.update()
     clock.tick(fps)
