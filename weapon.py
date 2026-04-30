@@ -19,11 +19,12 @@ class Weapons():
     def rotate_gun(self, orbit_x, orbit_y, center_rot_char):
         print(f"self.mx: {self.mx}, self.my: {self.my}")
         print(f"center_rot_char[0]: {center_rot_char[0]}, center_rot_char[1]: {center_rot_char[1]}")
-        self.dx, dy = self.mx - center_rot_char[0], self.my - center_rot_char[1]
-        angle = math.degrees(math.atan2(dy, self.dx)) + 0 #0 is correction angle
-        print(f"dx: {self.dx}, dy: {dy}")
+
+        dx, dy = self.mx - center_rot_char[0], self.my - center_rot_char[1]
+        angle = math.degrees(math.atan2(dy, dx)) + 0 #0 is correction angle
+        print(f"dx: {dx}, dy: {dy}")
         #flips the image if left from character
-        if self.dx < 0:
+        if dx < 0:
             base_image = pg.transform.flip(self.image, False, True)
         else:
             base_image = self.image
