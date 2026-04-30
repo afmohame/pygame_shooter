@@ -4,6 +4,7 @@ import weapon
 import characters
 import collision
 import cte
+import world
 pygame.init()
 #-----------------------------------------------
 #                   KLASSEN
