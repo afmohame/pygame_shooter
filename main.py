@@ -60,13 +60,21 @@ sprite_revolver = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.p
 player = Player(
     cte.pos, cte.char_stat, cte.hitbox_info, cte.sprite_info, sprite_player, cte.animation_info, cte.animation_moves, (None, None))
 
-#draw
-anchor_surface = pygame.Surface((cte.radius, cte.radius))
-anchor_point = pygame.draw.circle(anchor_surface, (0, 0, 200), (cte.radius/2, cte.radius/2), cte.radius/2)
-
 #gun
 weapon_xy = (cte.sprite_info["sprite_player_width"]*cte.scale, cte.scale*cte.sprite_info["sprite_player_height"]/2)
 artillery = {"revolver": weapon.Weapons(weapon_xy, 3, 10, "common", sprite_revolver, cte.radius, 2, cte.center)}
+
+#world
+tile_size = (32, 32)
+floor = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), tile_size)
+outer_walls = {pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"),
+               pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/01_top_outer_wall.png"),
+               pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/05_left_outer_wall.png"),
+               pygame.transform.rotate(pygame.image.load(
+                   "sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"), -90)}
+destr_wall = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/column_sprite.png"), tile_size)
+world_map = world.World(floor, destr_wall, outer_walls, tile_size[0])
+world_map.generate_world()
 
 #animation preload
 #-----------------------------------------------
@@ -77,6 +85,7 @@ cte.list_of_guns.append(artillery["revolver"])
 run = True
 
 shoot = False
+map_generate = True
 while run:
     screen.fill(bg) #can't be deleted it refreshes the screen.
 
@@ -86,6 +95,12 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+    #make world
+    world_map.draw_world(screen)
+    if map_generate: 
+        
+        map_generate != map_generate
 
     pos_mouse = pygame.mouse.get_pos()
     #update animation
@@ -97,20 +112,20 @@ while run:
             cte.frame = 0
 
     for character in cte.list_of_players:
-        #character.draw(screen)#draws a hitbox in red
+        character.draw_hitbox(screen)#draws a hitbox in red
         character.moving()
         character.make_animation(black, cte.first_x, cte.first_y, cte.x_space, cte.y_space, cte.column_length)
         character.draw_char(screen, character.get_animation(cte.frame), character.x, character.y)#puts character on screen which is a surface
-        center_char = (character.x + cte.sprite_info["sprite_player_width"], 
+        center_char = (character.x + cte.sprite_info["sprite_player_width"]*cte.scale/2, 
                        character.y + cte.scale*cte.sprite_info["sprite_player_height"]/2)
         #character.update()
-    screen.blit(anchor_surface, (center_char[0], center_char[1]))
+
     for gun in cte.list_of_guns:
         gun.update_mouse_pos(pos_mouse)
         gun.rotate_gun(cte.orbit_xy[0], cte.orbit_xy[1], center_char)
         gun.draw_gun(screen, gun.gun_surf, gun.rot_gun_screen)
         #gun.update()
-      
+
     if event.type == pygame.MOUSEBUTTONDOWN:
         shoot = True  
     if event.type == pygame.MOUSEBUTTONUP:

@@ -1,19 +1,57 @@
 import pygame as pg
-import numpy
+import numpy as np
 
-world_width, world_height = 20, 10
-tile_size = 30
-#numpy.zeros((rows, columns)) or numpy.zeros((height, width))
-world_map = numpy.zeros((world_height, world_width), dtype = int)
-gift_map = numpy.zeros((world_height, world_width), dtype = int)
-world_map[0, :] = 2 #first row to last column --> top row
-world_map[-1, :] = 2 #last row to last column --> bottom row
-world_map[:, 0] = 2 #first column to last row --> left row
-world_map[:, -1] = 2 #last column to last row --> right row
+class World():
+    def __init__(self, floor, destr_wall, outer_wall, tile_size):
+        self.world_width, self.world_height = 100, 70
+        self.floor, self.destr_wall, self.outer_wall = floor, destr_wall, outer_wall
+        self.tile_size = tile_size
+        self.tile_type = {
+            0: self.floor,
+            1: self.destr_wall,
+            2: self.outer_wall
+}
+        self.world_map = np.full((self.world_height, self.world_width), 2, dtype = int)
 
+    def generate_world(self):
+        self.world_map[1:-1, 1:-1] = np.random.choice(
+            [0, 1], #number(s) to randomly disperse in the room
+            size = (self.world_height - 2, self.world_width - 2), #boundaries where to disperse them
+            p = [0.8, 0.2] #probabilities of 0 and 1 respectively
+        )
+        self.world_map[1:4, 1:4] = 0
 
-print(world_map)
+    def get_world(self):
+        return self.world_map
+    
+    def place_char(self):
+        pass
 
+    def draw_world(self, surface):
+        row_indx, column_indx = 0, 0
+        for row in self.world_map:
+            for column in row:
+                x = column_indx*self.tile_size
+                y = row_indx*self.tile_size
+                if column == 0:
+                    surface.blit(self.tile_type[0], (x, y))
+                if column == 1:
+                    surface.blit(self.tile_type[0], (x, y))
+                    surface.blit(self.tile_type[1], (x, y))
+                if column == 2:
+                    surface.blit(self.tile_type[0], (x, y))
+                    surface.blit(self.tile_type[0], (x, y))#this should be outer wall in place of 0/floor tile
+                
+                column_indx += 1
+            row_indx += 1
+            column_indx = 0
+
+                
+
+"""world_map = World(1, 2, 3)
+world_map.generate_world()
+print(world_map.get_world())
+"""
 
 
 
@@ -24,4 +62,18 @@ print(world_map)
     --> 1 is random gun 5% 
     --> 2 is power_up 3%
 2 non destructible oute walls bullets can ricochet on them
+6 is place for character
+
+#####INNER ROOM######
+(1)x-------------x(2)
+
+
+
+
+(3)x-------------x(4)
+
+(1): row = 1, column = 1
+(2): row = 1, column = n-1
+(3): row = n-1, column = 1
+(4): row = n-1, column = n-1
 """
