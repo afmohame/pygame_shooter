@@ -7,9 +7,9 @@ class World():
         self.floor, self.destr_wall, self.outer_wall = floor, destr_wall, outer_wall
         self.tile_size = tile_size
         self.tile_type = {
-            0: self.floor,
-            1: self.destr_wall,
-            2: self.outer_wall
+            0: self.floor, #walkable
+            1: self.destr_wall, #not walkable
+            2: self.outer_wall #not walkable
 }
         self.world_map = np.full((self.world_height, self.world_width), 2, dtype = int)
 
@@ -19,13 +19,41 @@ class World():
             size = (self.world_height - 2, self.world_width - 2), #boundaries where to disperse them
             p = [0.8, 0.2] #probabilities of 0 and 1 respectively
         )
-        self.world_map[1:4, 1:4] = 0
+        self.world_map[1:4, 1:4] = 0 #where the player will spawn
 
     def get_world(self):
         return self.world_map
     
     def place_char(self):
         pass
+
+    def move_allowed(self, char_pos, char_hitbox):#modulo geeft rest -> niet gebruiken
+        hitbox = {"left": char_pos[0], "right": char_pos[0] + char_hitbox[0] - 1, "top": char_pos[1], "bottom": char_pos[1] + char_hitbox[1] - 1}
+        #TOP LEFT
+        tile_x = (hitbox["left"])//self.tile_size #gives which tile I am on
+        tile_y = (hitbox["top"])//self.tile_size #gives which tile I am on
+        if self.world_map[tile_y, tile_x] != 0:
+            return False
+        
+        #TOP RIGHT
+        tile_x = (hitbox["right"])//self.tile_size
+        tile_y = (hitbox["top"])//self.tile_size
+        if self.world_map[tile_y, tile_x] != 0:
+            return False
+        
+        #BOTTOM LEFT
+        tile_x = (hitbox["left"])//self.tile_size
+        tile_y = (hitbox["bottom"])//self.tile_size
+        if self.world_map[tile_y, tile_x] != 0:
+            return False
+        
+        #BOTTOM RIGHT
+        tile_x = (hitbox["right"])//self.tile_size
+        tile_y = (hitbox["bottom"])//self.tile_size
+        if self.world_map[tile_y, tile_x] != 0:
+            return False
+        
+        return True
 
     def draw_world(self, surface):
         row_indx, column_indx = 0, 0
@@ -40,20 +68,11 @@ class World():
                     surface.blit(self.tile_type[1], (x, y))
                 if column == 2:
                     surface.blit(self.tile_type[0], (x, y))
-                    surface.blit(self.tile_type[0], (x, y))#this should be outer wall in place of 0/floor tile
+                    surface.blit(self.tile_type[2], (x, y))#this should be outer wall in place of 0/floor tile
                 
                 column_indx += 1
             row_indx += 1
             column_indx = 0
-
-                
-
-"""world_map = World(1, 2, 3)
-world_map.generate_world()
-print(world_map.get_world())
-"""
-
-
 
 """
 0 is walkable

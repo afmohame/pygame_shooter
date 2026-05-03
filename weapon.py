@@ -2,7 +2,7 @@ import pygame as pg
 import math
 
 class Weapons():
-    def __init__(self, weapon_xy, shooting_power, drop_rate, rarity, image, radius, ricochet, center_char, bullet_count = None):
+    def __init__(self, weapon_xy, shooting_power, drop_rate, rarity, image, radius, ricochet, center_char, speed, bullet_count = None):
         self.x, self.y = weapon_xy[0], weapon_xy[1]
         self.shooting_power = shooting_power
         self.drop_rate = drop_rate
@@ -11,6 +11,7 @@ class Weapons():
         self.radius = radius
         self.ricochet = ricochet
         self.center_char = center_char #tuple (x, y)
+        self.speed = speed
         self.bullet_count = bullet_count
     
     def update_mouse_pos(self, mouse_pos):

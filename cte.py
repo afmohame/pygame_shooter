@@ -33,7 +33,7 @@ animation_info = {"scale": scale, "animation_steps": 6, "column_index": 0}
 #-----------------------------------------------
 # player
 #-----------------------------------------------
-pos = (30, 10)
+pos = (60, 60)
 
 char_stat = {
     "hp": 30,
@@ -43,7 +43,7 @@ char_stat = {
 }
 
 hitbox_info = {
-    "hitbox_width": 12,
+    "hitbox_width": 11,
     "hitbox_height": 22,
     "hitbox_color": (255, 0, 0),
 }
@@ -61,6 +61,7 @@ center = (
     scale*sprite_info["sprite_player_height"]/2,
 )
 
+revolver_speed = 6
 radius = sprite_info["sprite_player_height"]/2
 orbit_xy = (sprite_info["sprite_player_height"]*1.5, 0)
 

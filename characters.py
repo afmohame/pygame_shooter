@@ -14,14 +14,14 @@ class Character(Position):
         self.hp = char_stat["hp"]
         self.defense = char_stat["defense"]
         self.speed = char_stat["speed"]
-        self.hitbox_width = hitbox_info["hitbox_width"]
-        self.hitbox_height = hitbox_info["hitbox_height"] 
-        self.hitbox_color = hitbox_info["hitbox_color"]  #temporary
-        self.sprite_player_width = sprite_info["sprite_player_width"] 
-        self.sprite_player_height = sprite_info["sprite_player_height"]
         self.scale = animation_info["scale"]
         self.animation_steps = animation_info["animation_steps"]
         self.column_index = animation_info["column_index"]
+        self.hitbox_width = hitbox_info["hitbox_width"]*self.scale
+        self.hitbox_height = hitbox_info["hitbox_height"]*self.scale
+        self.hitbox_color = hitbox_info["hitbox_color"]  #temporary
+        self.sprite_player_width = sprite_info["sprite_player_width"] 
+        self.sprite_player_height = sprite_info["sprite_player_height"]
         self.animation_seq = []
             
     def make_animation(self, transparancy_color, first_x, first_y, x_space, y_space, column_length):
@@ -36,5 +36,5 @@ class Character(Position):
         surface.blit(blit_image, (x, y))
 
     def draw_hitbox(self, surface):
-        pg.draw.rect(surface, self.hitbox_color, rect=(self.x, self.y, (self.hitbox_width)*self.scale, 
-                                                           (self.hitbox_height)*self.scale))
+        pg.draw.rect(surface, self.hitbox_color, rect=(self.x, self.y, (self.hitbox_width), 
+                                                           (self.hitbox_height)))

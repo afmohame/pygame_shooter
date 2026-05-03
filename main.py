@@ -23,18 +23,27 @@ class Player(characters.Character):
         keys = pygame.key.get_pressed()
 
         self.column_index = self.animation_moves["idle"] #column index for resting sprite
+        if keys[pygame.K_LSHIFT]:
+            self.speed = 6
+            #self.stamina -= 1
+        else:
+            self.speed = 4
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.column_index = self.animation_moves["up"]
-            self.y -= self.speed
+            if world_map.move_allowed((self.x, self.y - self.speed), (self.hitbox_width, self.hitbox_height)):
+                self.column_index = self.animation_moves["up"]
+                self.y -= self.speed
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.column_index = self.animation_moves["down"]
-            self.y += self.speed
+            if world_map.move_allowed((self.x, self.y + self.speed), (self.hitbox_width, self.hitbox_height)):
+                self.column_index = self.animation_moves["down"]
+                self.y += self.speed
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.column_index = self.animation_moves["left"]
-            self.x -= self.speed
+            if world_map.move_allowed((self.x - self.speed, self.y), (self.hitbox_width, self.hitbox_height)):
+                self.column_index = self.animation_moves["left"]
+                self.x -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.column_index = self.animation_moves["right"]
-            self.x += self.speed
+            if world_map.move_allowed((self.x + self.speed, self.y), (self.hitbox_width, self.hitbox_height)):
+                self.column_index = self.animation_moves["right"]
+                self.x += self.speed
 
     def toggle_powerups(self):
         pass
@@ -62,16 +71,12 @@ player = Player(
 
 #gun
 weapon_xy = (cte.sprite_info["sprite_player_width"]*cte.scale, cte.scale*cte.sprite_info["sprite_player_height"]/2)
-artillery = {"revolver": weapon.Weapons(weapon_xy, 3, 10, "common", sprite_revolver, cte.radius, 2, cte.center)}
+artillery = {"revolver": weapon.Weapons(weapon_xy, 3, 10, "common", sprite_revolver, cte.radius, 2, cte.center, cte.revolver_speed)}
 
 #world
-tile_size = (32, 32)
+tile_size = (55, 55)
 floor = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), tile_size)
-outer_walls = {pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"),
-               pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/01_top_outer_wall.png"),
-               pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/05_left_outer_wall.png"),
-               pygame.transform.rotate(pygame.image.load(
-                   "sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"), -90)}
+outer_walls = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"), tile_size)
 destr_wall = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/column_sprite.png"), tile_size)
 world_map = world.World(floor, destr_wall, outer_walls, tile_size[0])
 world_map.generate_world()
