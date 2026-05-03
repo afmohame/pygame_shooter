@@ -6,10 +6,10 @@ Zet hier jouw rol. Eigenlijk wat je gaat doen.
 
 Mohamed Afakkir contributies:
 - Power-ups (momenteel niets)
-- Player/Character
-- Sprites/spritesheet 
-- weapons class
-- world class
+- Player/Character (alles)
+- Sprites/spritesheet (alles)
+- weapons class (alles)
+- world class (alles)
 
 
 
