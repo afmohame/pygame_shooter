@@ -53,13 +53,34 @@ class Enemies(characters.Character):
         #super().__init__(hp, defense, speed)
         pass
 
+class Camera():
+    def __init__(self, camera_xy):
+        self.camera_x, self.camera_y = camera_xy[0], camera_xy[1]
+        self.camera_xy = (self.camera_x, self.camera_y)
+    
+    def update_camera(self, screen, char_pos, sprite_w_h, world_dim, tile_size):#world_dim is in tiles not pixels
+        camera_x_min, camera_x_max = 0, world_dim[0]*tile_size - screen[0]
+        camera_y_min, camera_y_max = 0, world_dim[1]*tile_size - screen[1]
+
+        center_char = (char_pos[0] + sprite_w_h[0]//2, char_pos[1] + sprite_w_h[1]//2)
+
+        target_x = center_char[0] - screen[0]//2
+        target_y = center_char[1] - screen[1]//2
+
+        #clamp camera inside
+        camera_x_min, camera_y_min = 0, 0
+        camera_x_max =  max(0, world_dim[0]*tile_size - screen[0])
+        camera_y_max = max(0, world_dim[1]*tile_size - screen[1])
+
+        self.camera_x = max(camera_x_min, min(target_x, camera_x_max))
+        self.camera_y = max(camera_y_min, min(target_y, camera_y_max))
+        
+        self.camera_xy = (self.camera_x, self.camera_y)
+
 
 # screen
-screen_w, screen_h = 1500, 900
-fps = 60
-black, bg = (0, 0, 0), (100, 100, 100)#grey
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((screen_w, screen_h))
+screen = pygame.display.set_mode((cte.screen_w, cte.screen_h))
 
 #sprites
 sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
@@ -74,13 +95,14 @@ weapon_xy = (cte.sprite_info["sprite_player_width"]*cte.scale, cte.scale*cte.spr
 artillery = {"revolver": weapon.Weapons(weapon_xy, 3, 10, "common", sprite_revolver, cte.radius, 2, cte.center, cte.revolver_speed)}
 
 #world
-tile_size = (55, 55)
-floor = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), tile_size)
-outer_walls = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"), tile_size)
-destr_wall = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/column_sprite.png"), tile_size)
-world_map = world.World(floor, destr_wall, outer_walls, tile_size[0])
+floor = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), cte.tile_size)
+outer_walls = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"), cte.tile_size)
+destr_wall = pygame.transform.scale(pygame.image.load("sprites/images_chosen_for_game/column_sprite.png"), cte.tile_size)
+world_map = world.World(cte.world_dim, floor, destr_wall, outer_walls, cte.tile_size[0])
 world_map.generate_world()
 
+#camera
+camera_move = Camera(cte.camera_pos)
 #animation preload
 #-----------------------------------------------
 #                MAIN GAME LOOP
@@ -92,7 +114,7 @@ run = True
 shoot = False
 map_generate = True
 while run:
-    screen.fill(bg) #can't be deleted it refreshes the screen.
+    screen.fill(cte.bg) #can't be deleted it refreshes the screen.
 
     #this block needs to be above other event.type otherwise it does not work 
     #repeating for event in pygame.event.get() is also not good
@@ -101,11 +123,8 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
-    #make world
-    world_map.draw_world(screen)
-    if map_generate: 
-        
-        map_generate != map_generate
+    #draw world
+    world_map.draw_world(screen, (camera_move.camera_x, camera_move.camera_y))
 
     pos_mouse = pygame.mouse.get_pos()
     #update animation
@@ -117,18 +136,21 @@ while run:
             cte.frame = 0
 
     for character in cte.list_of_players:
-        character.draw_hitbox(screen)#draws a hitbox in red
+        #camera
+        camera_move.update_camera((cte.screen_w, cte.screen_h), (character.x, character.y), cte.sprite_w_h, cte.world_dim, cte.tile_size[0])
+        character.draw_hitbox(screen, camera_move.camera_xy)#draws a hitbox in red
         character.moving()
-        character.make_animation(black, cte.first_x, cte.first_y, cte.x_space, cte.y_space, cte.column_length)
-        character.draw_char(screen, character.get_animation(cte.frame), character.x, character.y)#puts character on screen which is a surface
-        center_char = (character.x + cte.sprite_info["sprite_player_width"]*cte.scale/2, 
+        character.make_animation(cte.black, cte.first_x, cte.first_y, cte.x_space, cte.y_space, cte.column_length)
+        character.draw_char(screen, character.get_animation(cte.frame), character.x, character.y, camera_move.camera_xy)#puts character on screen which is a surface
+        center_char_real = (character.x + cte.sprite_info["sprite_player_width"]*cte.scale/2, 
                        character.y + cte.scale*cte.sprite_info["sprite_player_height"]/2)
         #character.update()
 
     for gun in cte.list_of_guns:
-        gun.update_mouse_pos(pos_mouse)
-        gun.rotate_gun(cte.orbit_xy[0], cte.orbit_xy[1], center_char)
-        gun.draw_gun(screen, gun.gun_surf, gun.rot_gun_screen)
+        pos_mouse_real = (pos_mouse[0] + camera_move.camera_xy[0], pos_mouse[1] + camera_move.camera_xy[1])
+        gun.update_mouse_pos(pos_mouse_real)
+        gun.rotate_gun(cte.orbit_xy[0], cte.orbit_xy[1], center_char_real)
+        gun.draw_gun(screen, gun.gun_surf, gun.rot_gun_screen, camera_move.camera_xy)
         #gun.update()
 
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -137,6 +159,6 @@ while run:
         shoot = False
 
     pygame.display.update()
-    clock.tick(fps)
+    clock.tick(cte.fps)
 
 pygame.quit()

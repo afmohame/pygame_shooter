@@ -47,5 +47,5 @@ class Weapons():
         if shoot:
             pass
     
-    def draw_gun(self, screen, blit_image, pos):
-        screen.blit(blit_image, pos)
+    def draw_gun(self, screen, blit_image, pos, camera):
+        screen.blit(blit_image, (pos[0] - camera[0], pos[1] - camera[1]))

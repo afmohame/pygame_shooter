@@ -2,8 +2,8 @@ import pygame as pg
 import numpy as np
 
 class World():
-    def __init__(self, floor, destr_wall, outer_wall, tile_size):
-        self.world_width, self.world_height = 100, 70
+    def __init__(self, world_dim, floor, destr_wall, outer_wall, tile_size):
+        self.world_width, self.world_height = world_dim[0], world_dim[1]
         self.floor, self.destr_wall, self.outer_wall = floor, destr_wall, outer_wall
         self.tile_size = tile_size
         self.tile_type = {
@@ -55,12 +55,12 @@ class World():
         
         return True
 
-    def draw_world(self, surface):
+    def draw_world(self, surface, camera):
         row_indx, column_indx = 0, 0
         for row in self.world_map:
             for column in row:
-                x = column_indx*self.tile_size
-                y = row_indx*self.tile_size
+                x = column_indx*self.tile_size - camera[0]
+                y = row_indx*self.tile_size - camera[1]
                 if column == 0:
                     surface.blit(self.tile_type[0], (x, y))
                 if column == 1:

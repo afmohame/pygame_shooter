@@ -1,5 +1,7 @@
 import pygame as pg
 import weapon
+#import main
+
 #-----------------------------------------------
 #                  constants
 #-----------------------------------------------
@@ -34,7 +36,6 @@ animation_info = {"scale": scale, "animation_steps": 6, "column_index": 0}
 # player
 #-----------------------------------------------
 pos = (60, 60)
-
 char_stat = {
     "hp": 30,
     "defense": 10,
@@ -52,7 +53,8 @@ sprite_info = {
     "sprite_player_width": 14,
     "sprite_player_height": 21,
 }
-
+sprite_w_h = (sprite_info["sprite_player_width"]*scale, sprite_info["sprite_player_height"]*scale)
+center_char = (pos[0] + sprite_info["sprite_player_width"]*scale//2, pos[1] + sprite_info["sprite_player_height"]*scale//2)
 #-----------------------------------------------
 # guns
 #-----------------------------------------------
@@ -66,9 +68,18 @@ radius = sprite_info["sprite_player_height"]/2
 orbit_xy = (sprite_info["sprite_player_height"]*1.5, 0)
 
 #-----------------------------------------------
+# world
+#-----------------------------------------------
+world_dim = (100, 70)
+tile_size = (55, 55)
+
+#-----------------------------------------------
 # OTHERS
 #-----------------------------------------------
+black, bg = (0, 0, 0), (100, 100, 100)#grey
+fps = 60
+screen_w, screen_h = 1500, 900
 list_of_players, list_of_enemies, list_of_guns = [], [], []
-
+camera_pos = (0, 0)
 
 #animation preload

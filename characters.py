@@ -32,9 +32,9 @@ class Character(Position):
         self.length_animation_list = len(self.animation_seq) 
         return self.animation_seq[frame]
     
-    def draw_char(self, surface, blit_image, x, y):
-        surface.blit(blit_image, (x, y))
+    def draw_char(self, surface, blit_image, x, y, camera):
+        surface.blit(blit_image, (x - camera[0], y - camera[1]))
 
-    def draw_hitbox(self, surface):
-        pg.draw.rect(surface, self.hitbox_color, rect=(self.x, self.y, (self.hitbox_width), 
+    def draw_hitbox(self, surface, camera):
+        pg.draw.rect(surface, self.hitbox_color, rect=(self.x - camera[0], self.y - camera[1], (self.hitbox_width), 
                                                            (self.hitbox_height)))
