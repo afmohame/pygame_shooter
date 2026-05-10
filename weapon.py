@@ -1,8 +1,11 @@
 import pygame as pg
+import projectile
 import math
+import cte
+
 
 class Weapons():
-    def __init__(self, weapon_xy, shooting_power, drop_rate, rarity, image, radius, ricochet, center_char, speed, bullet_count = None):
+    def __init__(self, weapon_xy, shooting_power, drop_rate, rarity, image, radius, ricochet, center_char, speed, bullet_img):
         self.x, self.y = weapon_xy[0], weapon_xy[1]
         self.shooting_power = shooting_power
         self.drop_rate = drop_rate
@@ -12,7 +15,7 @@ class Weapons():
         self.ricochet = ricochet
         self.center_char = center_char #tuple (x, y)
         self.speed = speed
-        self.bullet_count = bullet_count
+        self.bullet_img = bullet_img
     
     def update_mouse_pos(self, mouse_pos):
         self.mx, self.my = mouse_pos[0], mouse_pos[1]
@@ -43,9 +46,12 @@ class Weapons():
         
         self.rot_gun_screen = self.gun_surf.get_rect(center=(self.gun_center_x, self.gun_center_y))
 
-    def shoot(self, shoot, bullet_img):
-        if shoot:
-            pass
-    
+    def shoot(self, current_time, mouse_click):
+        proj = projectile.Projectile((self.gun_center_x, self.gun_center_y), "revolver bullet", cte.gun_info["area"], 
+                                 cte.gun_info["damage"], cte.gun_info["speed"], cte.gun_info["life_time"],current_time,
+                                 mouse_click)
+
+        cte.list_of_player_projectile.append(proj)
+
     def draw_gun(self, screen, blit_image, pos, camera):
         screen.blit(blit_image, (pos[0] - camera[0], pos[1] - camera[1]))

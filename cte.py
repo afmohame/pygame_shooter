@@ -81,9 +81,9 @@ bot1_stats = {
     "defense": 15,
     "speed": speed_bot1,
     "speed_xy": speed_bot1/math.sqrt(2),
-    "detection_range": 500,
+    "detection_range": 900,
     "attack_cooldown": 200,
-    "attack_range": 310,
+    "attack_range": 410,
     "stop_range": 170
 }
 
@@ -107,7 +107,7 @@ center = (
     scale*sprite_info["sprite_player_width"]/2,
     scale*sprite_info["sprite_player_height"]/2,
 )
-
+gun_info = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600}
 revolver_speed = 6
 radius = sprite_info["sprite_player_height"]/2
 orbit_xy = (sprite_info["sprite_player_height"]*1.5, 0)
@@ -125,7 +125,7 @@ proj_bot1 = {
 #-----------------------------------------------
 # world
 #-----------------------------------------------
-world_dim = (100, 70)
+world_dim = (60, 50)
 tile_size = (55, 55)
 
 #-----------------------------------------------
@@ -134,7 +134,9 @@ tile_size = (55, 55)
 black, bg = (0, 0, 0), (100, 100, 100)#grey
 fps = 60
 screen_w, screen_h = 1500, 900
-list_of_players, list_of_enemies, list_of_guns, list_of_projectile = [], [], [], []
+list_of_players, list_of_enemies, list_of_guns = [], [], []
+list_of_player_projectile = []
+list_of_enemy_projectile = []
 camera_pos = (0, 0)
 
 screen = pg.display.set_mode((screen_w, screen_h))

@@ -37,7 +37,6 @@ class Enemy(characters.Character):
             #Make it retreat
             if distance <= self.stop_chase_range:
                 self.bot_state = "retreat"
-                print(f"I need to retreat! bot state: {self.bot_state}")
                 move_x, move_y = abs(dx) > self.speed, abs(dy) > self.speed #checks if bot needs to move each axis
                 if move_x and move_y:
                     speed = self.speed_xy
@@ -63,49 +62,48 @@ class Enemy(characters.Character):
             #Make it attack
             elif distance <= self.attack_range:
                 self.bot_state = "attack"
-                print(f"Prepare for attack! bot state: {self.bot_state}")
 
                 #Attack cooldown and player hp
                 if current_time - self.last_atk > self.atk_clown:
                     proj = projectile.Projectile(self.center, "magic bullet", cte.proj_bot1["area"], cte.proj_bot1["damage"],
-                                           cte.proj_bot1["speed"], cte.proj_bot1["life_time"], current_time, (player.x, player.y))
-                    cte.list_of_projectile.append(proj)
-                    #player.hp -= self.atk
+                                           cte.proj_bot1["speed"], cte.proj_bot1["life_time"], current_time, player.center)
+                    cte.list_of_enemy_projectile.append(proj)
                     self.last_atk = current_time
-                    print(f"I am attacking, bot state: {self.bot_state}")
             
             #Make it chase
             else:
                 self.bot_state = "chase"
-                print(f"Player detected! bot state: {self.bot_state}")
+                tile_pos = world_map.find_path(self.tile_pos, player.tile_pos)
+                if len(tile_pos) >= 2:
+                    pixel_pos = (tile_pos[1][0]*self.tile_size + self.tile_size//2, tile_pos[1][1]*self.tile_size + self.tile_size//2)
 
-                #Movement logic
-                move_x, move_y = abs(dx) > self.speed, abs(dy) > self.speed #checks if bot needs to move each axis
-                if move_x and move_y:
-                    speed = self.speed_xy
-                else:
-                    speed = self.speed
-        
-                if move_x:
-                    if dx > 0:
-                        if world_map.move_allowed((self.x - speed, self.y), (self.hitbox_width, self.hitbox_height)):
-                            self.x -= speed
+                    #Movement logic
+                    cdx, cdy = pixel_pos[0] - self.center[0], pixel_pos[1] - self.center[1]
+                    move_x, move_y = abs(cdx) > self.speed, abs(cdy) > self.speed #checks if bot needs to move each axis
+                    if move_x and move_y:
+                        speed = self.speed_xy
                     else:
-                        if world_map.move_allowed((self.x + speed, self.y), (self.hitbox_width, self.hitbox_height)):
-                            self.x += speed
-                    
-                if move_y:
-                    if dy > 0:
-                        if world_map.move_allowed((self.x, self.y - speed), (self.hitbox_width, self.hitbox_height)):
-                            self.y -= speed
-                    else:
-                        if world_map.move_allowed((self.x, self.y + speed), (self.hitbox_width, self.hitbox_height)):
-                            self.y += speed
+                        speed = self.speed
+            
+                    if move_x:
+                        if cdx > 0:
+                            if world_map.move_allowed((self.x + speed, self.y), (self.hitbox_width, self.hitbox_height)):
+                                self.x += speed
+                        else:
+                            if world_map.move_allowed((self.x - speed, self.y), (self.hitbox_width, self.hitbox_height)):
+                                self.x -= speed
+                        
+                    if move_y:
+                        if cdy > 0:
+                            if world_map.move_allowed((self.x, self.y + speed), (self.hitbox_width, self.hitbox_height)):
+                                self.y += speed
+                        else:
+                            if world_map.move_allowed((self.x, self.y - speed), (self.hitbox_width, self.hitbox_height)):
+                                self.y -= speed
 
         #Make it idle 
         else:
             self.bot_state = "idle"
-            print(f"I'm idle \nPlayer not detected! bot state: {self.bot_state}")
         
         self.update_tile_pos()
     
