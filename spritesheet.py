@@ -1,9 +1,5 @@
 import pygame
 
-class Animations():#probably won't use it
-    def __init__(self):
-        pass
-
 class Sprites():
     def __init__(self, sprite_sheet):#groups may be added but don't know what it does 
         #super().__init__(*groups)

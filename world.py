@@ -17,9 +17,10 @@ class World():
         self.world_map[1:-1, 1:-1] = np.random.choice(
             [0, 1], #number(s) to randomly disperse in the room
             size = (self.world_height - 2, self.world_width - 2), #boundaries where to disperse them
-            p = [0.8, 0.2] #probabilities of 0 and 1 respectively
+            p = [0.87, 0.13] #probabilities of 0 and 1 respectively
         )
         self.world_map[1:4, 1:4] = 0 #where the player will spawn
+        self.world_map[-2:-5, -2:-5] = 0 #where bots will spawn
 
     def get_world(self):
         return self.world_map
@@ -30,26 +31,26 @@ class World():
     def move_allowed(self, char_pos, char_hitbox):#modulo geeft rest -> niet gebruiken
         hitbox = {"left": char_pos[0], "right": char_pos[0] + char_hitbox[0] - 1, "top": char_pos[1], "bottom": char_pos[1] + char_hitbox[1] - 1}
         #TOP LEFT
-        tile_x = (hitbox["left"])//self.tile_size #gives which tile I am on
-        tile_y = (hitbox["top"])//self.tile_size #gives which tile I am on
+        tile_x = int((hitbox["left"])//self.tile_size) #gives which tile I am on
+        tile_y = int((hitbox["top"])//self.tile_size) #gives which tile I am on
         if self.world_map[tile_y, tile_x] != 0:
             return False
         
         #TOP RIGHT
-        tile_x = (hitbox["right"])//self.tile_size
-        tile_y = (hitbox["top"])//self.tile_size
+        tile_x = int((hitbox["right"])//self.tile_size)
+        tile_y = int((hitbox["top"])//self.tile_size)
         if self.world_map[tile_y, tile_x] != 0:
             return False
         
         #BOTTOM LEFT
-        tile_x = (hitbox["left"])//self.tile_size
-        tile_y = (hitbox["bottom"])//self.tile_size
+        tile_x = int((hitbox["left"])//self.tile_size)
+        tile_y = int((hitbox["bottom"])//self.tile_size)
         if self.world_map[tile_y, tile_x] != 0:
             return False
         
         #BOTTOM RIGHT
-        tile_x = (hitbox["right"])//self.tile_size
-        tile_y = (hitbox["bottom"])//self.tile_size
+        tile_x = int((hitbox["right"])//self.tile_size)
+        tile_y = int((hitbox["bottom"])//self.tile_size)
         if self.world_map[tile_y, tile_x] != 0:
             return False
         

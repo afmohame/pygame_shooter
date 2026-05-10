@@ -43,7 +43,7 @@ class Weapons():
         
         self.rot_gun_screen = self.gun_surf.get_rect(center=(self.gun_center_x, self.gun_center_y))
 
-    def shoot(self, shoot):
+    def shoot(self, shoot, bullet_img):
         if shoot:
             pass
     
