@@ -1,6 +1,6 @@
 import pygame as pg
 import math
-import world
+import world_old
 
 class Projectile():
     def __init__(self, proj_pos, proj_type, proj_area, damage, speed, life_time, spawn_time, player_pos):

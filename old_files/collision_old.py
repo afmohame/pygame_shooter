@@ -1,7 +1,7 @@
 import pygame as pg
-import characters
+import old_files.characters_old as characters_old
 
-class Collision(characters.Position):
+class Collision(characters_old.Position):
     def __init__(self, x, y):
         super().__init__(x, y)
     

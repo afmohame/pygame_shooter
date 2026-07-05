@@ -1,6 +1,5 @@
 import pygame as pg
-import world
-import weapon
+import weapon_old
 import math
 
 #-----------------------------------------------
@@ -57,16 +56,16 @@ char_stat = {
 }
 
 hitbox_info = {
-    "width": 11,
-    "height": 22,
-    "color": (255, 0, 0),
+    "hitbox_width": 11,
+    "hitbox_height": 22,
+    "hitbox_color": (255, 0, 0),
 }
 
 sprite_info = {
-    "width": 14,
-    "height": 21,
+    "sprite_player_width": 14,
+    "sprite_player_height": 21,
 }
-sprite_w_h = (sprite_info["width"]*scale, sprite_info["height"]*scale)
+sprite_w_h = (sprite_info["sprite_player_width"]*scale, sprite_info["sprite_player_height"]*scale)
 center_char = (pos[0] + sprite_w_h[0]//2, pos[1] + sprite_w_h[1]//2)
 
 #-----------------------------------------------
@@ -89,29 +88,29 @@ bot1_stats = {
 }
 
 bot1_hitbox_info = {
-    "width": 17,
-    "height": 19,
-    "color": (255, 0, 0),
+    "hitbox_width": 17,
+    "hitbox_height": 19,
+    "hitbox_color": (255, 0, 0),
 }
 
 bot1_sprite_info = {
-    "width": 17,
-    "height": 18,
+    "sprite_player_width": 17,
+    "sprite_player_height": 18,
 }
-bot1_w_h = (bot1_sprite_info["width"]*scale, bot1_sprite_info["height"]*scale)
+bot1_w_h = (bot1_sprite_info["sprite_player_width"]*scale, bot1_sprite_info["sprite_player_height"]*scale)
 center_bot1 = (pos[0] + bot1_w_h[0]//2, pos[1] + bot1_w_h[1]//2)
 
 #-----------------------------------------------
 # guns
 #-----------------------------------------------
 center = (
-    scale*sprite_info["width"]/2,
-    scale*sprite_info["height"]/2,
+    scale*sprite_info["sprite_player_width"]/2,
+    scale*sprite_info["sprite_player_height"]/2,
 )
 gun_info = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600}
 revolver_speed = 6
-radius = sprite_info["height"]/2
-orbit_xy = (sprite_info["height"]*1.5, 0)
+radius = sprite_info["sprite_player_height"]/2
+orbit_xy = (sprite_info["sprite_player_height"]*1.5, 0)
 
 #-----------------------------------------------
 # projectiles
@@ -129,11 +128,6 @@ proj_bot1 = {
 world_dim = (60, 50)
 tile_size = (55, 55)
 
-floor = pg.transform.scale(pg.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), tile_size)
-outer_walls = pg.transform.scale(pg.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/00_right_outer_wall.png"), tile_size)
-destr_wall = pg.transform.scale(pg.image.load("sprites/images_chosen_for_game/column_sprite.png"), tile_size)
-
-
 #-----------------------------------------------
 # OTHERS
 #-----------------------------------------------
@@ -144,6 +138,28 @@ list_of_players, list_of_enemies, list_of_guns = [], [], []
 list_of_player_projectile = []
 list_of_enemy_projectile = []
 camera_pos = (0, 0)
+#-----------------------------------------------
+# POWERUPS
+#-----------------------------------------------
+list_of_powerups = []
 
+# Powerup spawn cooldown (milliseconden)
+powerup_spawn_cooldown = 15000  # 15 seconden
+last_powerup_spawn = 0
+
+# Powerup types
+powerup_types = ["health", "damage", "speed"]
+
+# Powerup kleuren (RGB)
+powerup_colors = {
+    "health": (255, 0, 0),      # Rood
+    "damage": (255, 255, 0),    # Geel
+    "speed": (0, 255, 255)      # Cyan
+}
+
+# Powerup duur (milliseconden)
+powerup_life_time = 10000       # 10 seconden voordat hij verdwijnt
+powerup_effect_duration = 5000  # 5 seconden effect
+powerup_heal_amount = 30        # Hoeveelheid HP dat een health powerup herstelt
 screen = pg.display.set_mode((screen_w, screen_h))
 #animation preload

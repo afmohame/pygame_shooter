@@ -1,8 +1,8 @@
 import pygame
-import world
-import characters
+import world_old
+import characters_old
 
-class Player(characters.Character):
+class Player(characters_old.Character):
     def __init__(self, pos, char_stat, hitbox_info, sprite_info, sprite_sheet, 
                  animation_info, animation_moves, frame, last_update, tile_size, power_up = (None, None)):
         super().__init__(pos, char_stat, hitbox_info, sprite_info, sprite_sheet, animation_info, frame, last_update)

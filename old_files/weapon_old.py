@@ -1,7 +1,7 @@
 import pygame as pg
-import projectile
+import projectile_old
 import math
-import cte
+import cte_old
 
 
 class Weapons():
@@ -47,11 +47,11 @@ class Weapons():
         self.rot_gun_screen = self.gun_surf.get_rect(center=(self.gun_center_x, self.gun_center_y))
 
     def shoot(self, current_time, mouse_click):
-        proj = projectile.Projectile((self.gun_center_x, self.gun_center_y), "revolver bullet", cte.gun_info["area"], 
-                                 cte.gun_info["damage"], cte.gun_info["speed"], cte.gun_info["life_time"],current_time,
+        proj = projectile_old.Projectile((self.gun_center_x, self.gun_center_y), "revolver bullet", cte_old.gun_info["area"], 
+                                 cte_old.gun_info["damage"], cte_old.gun_info["speed"], cte_old.gun_info["life_time"],current_time,
                                  mouse_click)
 
-        cte.list_of_player_projectile.append(proj)
+        cte_old.list_of_player_projectile.append(proj)
 
     def draw_gun(self, screen, blit_image, pos, camera):
         screen.blit(blit_image, (pos[0] - camera[0], pos[1] - camera[1]))

@@ -1,5 +1,5 @@
 import pygame as pg
-import spritesheet
+import spritesheet_old
 
 
 class Position():
@@ -10,7 +10,7 @@ class Character(Position):
     def __init__(self, pos, char_stat, hitbox_info, sprite_info, sprite_sheet, 
                  animation_info, frame, last_update):
         super().__init__(pos[0], pos[1])
-        self.sprite_sheet = spritesheet.Sprites(sprite_sheet)
+        self.sprite_sheet = spritesheet_old.Sprites(sprite_sheet)
         self.hp = char_stat["hp"]
         self.defense = char_stat["defense"]
         self.speed = char_stat["speed"]

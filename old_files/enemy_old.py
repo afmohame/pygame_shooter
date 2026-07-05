@@ -1,10 +1,10 @@
 import pygame
-import characters
+import characters_old
 import math
-import projectile
-import cte
+import projectile_old
+import cte_old
 
-class Enemy(characters.Character):
+class Enemy(characters_old.Character):
     def __init__(self, pos, bot_stats, bot_hitbox_info, bot_sprite_info, bot_sprite_sheet, 
                  bot_animation_info, bot_animation_moves, frame, last_update, last_atk, tile_size):
         super().__init__( pos, bot_stats, bot_hitbox_info, bot_sprite_info, bot_sprite_sheet, 
@@ -65,9 +65,9 @@ class Enemy(characters.Character):
 
                 #Attack cooldown and player hp
                 if current_time - self.last_atk > self.atk_clown:
-                    proj = projectile.Projectile(self.center, "magic bullet", cte.proj_bot1["area"], cte.proj_bot1["damage"],
-                                           cte.proj_bot1["speed"], cte.proj_bot1["life_time"], current_time, player.center)
-                    cte.list_of_enemy_projectile.append(proj)
+                    proj = projectile_old.Projectile(self.center, "magic bullet", cte_old.proj_bot1["area"], cte_old.proj_bot1["damage"],
+                                           cte_old.proj_bot1["speed"], cte_old.proj_bot1["life_time"], current_time, player.center)
+                    cte_old.list_of_enemy_projectile.append(proj)
                     self.last_atk = current_time
             
             #Make it chase
