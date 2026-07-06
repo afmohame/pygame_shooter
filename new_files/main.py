@@ -24,7 +24,8 @@ current_animation = anim.player_animations["run_Rside"]
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 player = player.Player(cte.pos, cte.char_stat, cte.hitbox_info, cte.scale, cte.last_update_player, cte.tile_size)
-#world_map = world.World(cte.world_dim, cte.floor, cte.destr_wall, cte.outer_walls, cte.tile_size[0])
+world_map = world.World()
+world_map.generate_world()
 start_menu = menu.Menu()
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,8 +59,8 @@ while run == True:
                 frame = 0
 
         player.move()
+        world_map.draw_world(screen)
         player.draw_char(screen, player.current_anim[frame], player.x, player.y, (0, 0))
-        #world_map.draw_world(screen)
         pg.display.flip()
 
 pg.quit()

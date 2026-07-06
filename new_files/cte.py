@@ -1,6 +1,4 @@
 import pygame as pg
-import world
-import weapon
 import math
 
 #-----------------------------------------------
@@ -53,12 +51,11 @@ bot1_fy, bot1_y_space = 0, 0
 # player
 #-----------------------------------------------
 pos = (60, 60)
-speed_player = 4
 char_stat = {
     "hp": 30,
     "defense": 10,
-    "speed": speed_player,
-    "speed_xy": speed_player/math.hypot(speed_player, speed_player),
+    "speed": 4,
+    "speed_xy": 4/math.sqrt(2),
     "stamina": 100,
 }
 
@@ -132,7 +129,7 @@ proj_bot1 = {
 #-----------------------------------------------
 # world
 #-----------------------------------------------
-world_dim = (60, 50)
+world_dim = (10, 10)#world_dim = (60, 50)
 tile_size = (55, 55)
 
 floor = pg.transform.scale(pg.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), tile_size)
