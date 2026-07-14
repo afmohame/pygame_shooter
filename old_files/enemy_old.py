@@ -112,4 +112,4 @@ class Enemy(characters_old.Character):
 
 
 #projectiles
-projectile_img = pygame.image.load("sprites/images_chosen_for_game/proj_1.png")
+projectile_img = pygame.image.load("sprites/images_chosen_for_game/fireball.png")

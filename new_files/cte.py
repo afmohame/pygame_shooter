@@ -107,24 +107,19 @@ center_bot1 = (pos[0] + bot1_w_h[0]//2, pos[1] + bot1_w_h[1]//2)
 #-----------------------------------------------
 # guns
 #-----------------------------------------------
-center = (
-    scale*sprite_info["width"]/2,
-    scale*sprite_info["height"]/2,
-)
-gun_info = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600}
-revolver_speed = 6
-radius = sprite_info["height"]/2
-orbit_xy = (sprite_info["height"]*1.5, 0)
-
+revolver = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600, "speed": 6,
+                 "radius": sprite_info["height"]/2}
+orbit = (40, 0)
 #-----------------------------------------------
 # projectiles
 #-----------------------------------------------
-proj_bot1 = {
+fireball = {
     "damage": 2,
     "speed": 7,
     "area": 16,
     "life_time": 1600,
 }
+guns_projectile = [revolver, fireball]
 
 #-----------------------------------------------
 # world

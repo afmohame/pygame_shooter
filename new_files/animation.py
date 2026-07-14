@@ -44,3 +44,9 @@ bot1_animations = {
                                       cte.bot1_hitbox_info["width"], cte.bot1_hitbox_info["height"], cte.scale, cte.black,
                                       cte.bot1_x_space, cte.bot1_y_space, cte.bot1_column_length),
 }
+
+
+### WEAPONS/PROJECTILES ###
+revolver = pg.image.load("sprites/images_chosen_for_game/revolver.png")
+
+fireball = pg.image.load("sprites/images_chosen_for_game/fireball.png")

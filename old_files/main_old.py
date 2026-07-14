@@ -71,7 +71,7 @@ clock = pygame.time.Clock()
 
 #sprites
 sprite_player = pygame.image.load("sprites/images_chosen_for_game/player.png").convert_alpha()
-sprite_revolver = pygame.image.load("sprites/images_chosen_for_game/enemy1_gun.png").convert_alpha() 
+sprite_revolver = pygame.image.load("sprites/images_chosen_for_game/revolver.png").convert_alpha() 
 bullet_rev = pygame.image.load("sprites/images_chosen_for_game/bullet1.png").convert_alpha() 
 sprite_bot1 = pygame.image.load("sprites/images_chosen_for_game/bot1_walking.png").convert_alpha()
 
