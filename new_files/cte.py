@@ -39,8 +39,16 @@ column_length = 255
 animation_info = {"scale": scale, "animation_steps": 6, "column_index": 0}
 
 #BOTS
-animation_moves_enemies = {"idle": 0, "up": 0, "down": 0, "left": 0, "right": 0}
-bot1_animation_info = {"scale": scale, "animation_steps": 5, "column_index": 0}
+animation_moves_enemies = {
+    "idle": 0, 
+    "up": 0, 
+    "down": 0, 
+    "left": 0, 
+    "right": 0}
+bot1_animation_info = {
+    "scale": scale, 
+    "animation_steps": 5, 
+    "column_index": 0}
 states = {"idle": 0, "attack": 1, "chase": 2, "dead": 3, "alerted": 4} #idlesheet, attacksheet, chasesheet, deadsheet
 
 bot1_column_length = 144
@@ -107,8 +115,11 @@ center_bot1 = (pos[0] + bot1_w_h[0]//2, pos[1] + bot1_w_h[1]//2)
 #-----------------------------------------------
 # guns
 #-----------------------------------------------
-revolver = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600, "speed": 6,
-                 "radius": sprite_info["height"]/2}
+revolver = {
+    "sprite_w_h": (22, 18), 
+    "center": (22/2, 18/2), 
+    "projectile":{"damage": 3, "speed": 7, "life_time": 1600, "area": (6, 8), "type": "bullet"} # area: width, height
+}
 orbit = (40, 0)
 #-----------------------------------------------
 # projectiles
@@ -116,10 +127,11 @@ orbit = (40, 0)
 fireball = {
     "damage": 2,
     "speed": 7,
-    "area": 16,
+    "area": (16, 16),
     "life_time": 1600,
+    "type": "fire magic",
 }
-guns_projectile = [revolver, fireball]
+guns_projectile = [revolver["projectile"], fireball]
 
 #-----------------------------------------------
 # world

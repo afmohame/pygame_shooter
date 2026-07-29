@@ -27,24 +27,34 @@ player = player.Player(cte.pos, cte.char_stat, cte.hitbox_info, cte.scale, cte.l
 world_map = world.World()
 world_map.generate_world()
 start_menu = menu.Menu()
-weapons = weapon.Weapon((5, 5), cte.revolver, anim.revolver, (0,0)) #mouse pos in init is dumb
+weapons = weapon.Weapon((5, 5), anim.revolver, cte.revolver, cte.pos) #mouse pos in init is dumb
 objects = [player, world_map, start_menu, weapon]
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def handling_events(events):
+    run = True
+    shoot = False
+
     for event in events:
         if event.type == pg.QUIT:
-            return False
+            run = False
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
-                return False
-    return True
+                run = False
+        if event.type == pg.MOUSEBUTTONDOWN:
+            shoot = True
+    return run, shoot
+
+"""def is_shooting(shoot):
+    if shoot:
+        weapons.draw_proj(screen, anim.fireball)
+        weapons.update_proj_pos()"""
 
 while run == True:
     clock.tick(cte.fps)
     screen.fill(0)
     events = pg.event.get()
-    run = handling_events(events)
+    run, shoot = handling_events(events)
     pos_mouse = pg.mouse.get_pos()
 
     if start_menu.start == None:
@@ -69,7 +79,14 @@ while run == True:
         ### weapon ###
         weapons.update_mouse(pos_mouse)
         weapons.rotate_gun(cte.orbit, player.center_char((player.x, player.y)))
-        weapons.draw_weapon(screen, weapons.gun_img, weapons.rot_gun_screen) 
+        weapons.draw_weapon(screen, weapons.gun_img, weapons.rot_gun_screen)
+        weapons.update_proj_pos()
+        weapons.draw_proj(screen, anim.fireball)
+        if shoot:
+            print("shoot hin") #weapons.draw_proj(screen, anim.fireball)
+            """weapons.update_proj_pos()
+            weapons.draw_proj(screen, anim.fireball)"""
+
         pg.display.flip()
 
 pg.quit()

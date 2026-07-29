@@ -1,6 +1,4 @@
 import pygame as pg
-import world
-import weapon
 import math
 
 #-----------------------------------------------
@@ -108,7 +106,7 @@ center = (
     scale*sprite_info["width"]/2,
     scale*sprite_info["height"]/2,
 )
-gun_info = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600}
+revolver_info = {"sprite_w": 22, "sprite_h": 18, "center": (22/2, 18/2), "damage": 3, "speed": 7, "area": 8, "life_time": 1600}
 revolver_speed = 6
 radius = sprite_info["height"]/2
 orbit_xy = (sprite_info["height"]*1.5, 0)
@@ -116,6 +114,7 @@ orbit_xy = (sprite_info["height"]*1.5, 0)
 #-----------------------------------------------
 # projectiles
 #-----------------------------------------------
+revolver_amo = {"damage"}
 proj_bot1 = {
     "damage": 2,
     "speed": 7,

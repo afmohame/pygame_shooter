@@ -1,15 +1,14 @@
 import pygame as pg
 import animation as anim
 import math 
+import projectile as proj
 
-class Weapon:
-    def __init__(self, pos, gun_info, img, mouse_pos): #adding drop_rate, rarity, radius, ricochet,
+class Weapon(proj.Projectile):
+    def __init__(self, pos, img, gun, char_pos): #adding drop_rate, rarity, radius, ricochet,
+        proj_pos = (pos[0] + gun["sprite_w_h"][0]//2, pos[1] + gun["sprite_w_h"][1]//2)
+        super().__init__(proj_pos, gun["projectile"], char_pos)
         self.x, self.y = pos[0], pos[1]
-        self.mx, self.my = mouse_pos[0], mouse_pos[1]
-
-        self.damage = gun_info["damage"]
-        self.speed = gun_info["speed"]
-        self.radius = gun_info["radius"]
+        self.mx, self.my = 0, 0
         self.img = img
 
     def update_mouse(self, pos):
@@ -35,8 +34,9 @@ class Weapon:
 
         self.rot_gun_screen = self.gun_img.get_rect(center=gun_center)
 
+    def shoot(self, img):
+        pass
 
 
-    def draw_weapon(self, surface, img, position, camera = None):
+    def draw_weapon(self, surface, img, position, camera = None):#moet draw zijn niet draw_weapon
         surface.blit(img, (position[0], position[1]))
-        #surface.blit(img, (position[0], position[1]))
