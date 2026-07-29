@@ -2,14 +2,15 @@ import pygame as pg
 import animation as anim
 import math 
 import projectile as proj
+import cte 
 
-class Weapon(proj.Projectile):
+class Weapon():
     def __init__(self, pos, img, gun, char_pos): #adding drop_rate, rarity, radius, ricochet,
-        proj_pos = (pos[0] + gun["sprite_w_h"][0]//2, pos[1] + gun["sprite_w_h"][1]//2)
-        super().__init__(proj_pos, gun["projectile"], char_pos)
-        self.x, self.y = pos[0], pos[1]
+        self.x, self.y = pos[0], pos[1] #position of what?
         self.mx, self.my = 0, 0
         self.img = img
+        self.gun = gun
+        self.gun_center = pos
 
     def update_mouse(self, pos):
         self.mx, self.my = pos[0], pos[1]
@@ -30,13 +31,13 @@ class Weapon(proj.Projectile):
         rott_offset_x = orbit[0]*math.cos(rad) - orbit[1]*math.sin(rad)
         rott_offset_y =  orbit[0]*math.sin(rad) + orbit[1]*math.cos(rad)
 
-        gun_center = (center_char[0] + rott_offset_x, center_char[1] + rott_offset_y)
+        self.gun_center = (center_char[0] + rott_offset_x, center_char[1] + rott_offset_y)
 
-        self.rot_gun_screen = self.gun_img.get_rect(center=gun_center)
+        self.rot_gun_screen = self.gun_img.get_rect(center=self.gun_center)
 
-    def shoot(self, img):
-        pass
-
+    def shoot(self, mouse_pos, time):
+        new_projectile = proj.Projectile(self.gun_center, self.gun['projectile'], mouse_pos, time)
+        cte.list_of_player_projectile.append(new_projectile)
 
     def draw_weapon(self, surface, img, position, camera = None):#moet draw zijn niet draw_weapon
         surface.blit(img, (position[0], position[1]))

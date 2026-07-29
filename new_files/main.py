@@ -41,14 +41,10 @@ def handling_events(events):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
                 run = False
-        if event.type == pg.MOUSEBUTTONDOWN:
-            shoot = True
+        if event.type == pg.MOUSEBUTTONDOWN and start_menu.start == True:
+            if event.button == 1:
+                shoot = True
     return run, shoot
-
-"""def is_shooting(shoot):
-    if shoot:
-        weapons.draw_proj(screen, anim.fireball)
-        weapons.update_proj_pos()"""
 
 while run == True:
     clock.tick(cte.fps)
@@ -80,12 +76,18 @@ while run == True:
         weapons.update_mouse(pos_mouse)
         weapons.rotate_gun(cte.orbit, player.center_char((player.x, player.y)))
         weapons.draw_weapon(screen, weapons.gun_img, weapons.rot_gun_screen)
-        weapons.update_proj_pos()
-        weapons.draw_proj(screen, anim.fireball)
+
         if shoot:
-            print("shoot hin") #weapons.draw_proj(screen, anim.fireball)
-            """weapons.update_proj_pos()
-            weapons.draw_proj(screen, anim.fireball)"""
+            print("shoot him")
+            weapons.shoot(pos_mouse, now)
+        
+        for proj in cte.list_of_player_projectile.copy():
+            proj.update_proj_pos()
+            proj.draw_proj(screen, anim.fireball)
+
+            now = pg.time.get_ticks()
+            if now - proj.spawn_time >= proj.life_time:
+                cte.list_of_player_projectile.remove(proj)
 
         pg.display.flip()
 

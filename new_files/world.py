@@ -34,14 +34,14 @@ class World:
             size = (self.world_height - 2, self.world_width - 2), #boundaries where to disperse them
             p = [0.87, 0.13] #probabilities of 0 and 1 respectively
         )
-        #self.world_map[1:4, 1:4] = 0 #where the player will spawn
-        #self.world_map[-5:-2, -5:-2] = 0 #where bots will spawn
+        self.world_map[1:4, 1:4] = 0 #where the player will spawn
+        self.world_map[-4:-1, -4:-1] = 0 #where bots will spawn
 
         print(self.world_map)
     
-    def is_walkable(self, current_position, speed, move):
+    def is_walkable(self, current_position, speed, hitbox_wh):
         self.current_position = current_position
-        advance = self.coll.is_allowed(self.world_map, current_position, speed, self.tile_size, move)
+        advance = self.coll.is_allowed(self.world_map, current_position, speed, self.tile_size, hitbox_wh)
         if not advance:
             return False
         if advance:
@@ -66,7 +66,7 @@ class World:
                 if column == 6:
                     surface.blit(self.tile_type[1], (x, y))
                     surface.blit(self.outer_wall[6], (x, y))
-                if column == 1:
+                if column == 1 or column == 0:
                     surface.blit(self.tile_type[1], (x, y))
                 if column == 2:
                     surface.blit(self.tile_type[1], (x, y))
