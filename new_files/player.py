@@ -42,23 +42,30 @@ class Player(char.Character):
                 movexy[0] = True
             
             if movexy[0] and movexy[1]:
-                if (W and A) and world_map.is_walkable((self.x, self.y), (-self.speed_xy, -self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                if (W and A):
                     self.current_anim = anim.player_animations["run_Lside"]
-                    #self.rect = 
-                    self.x -= self.speed_xy
-                    self.y -= self.speed_xy
-                if (W and D) and world_map.is_walkable((self.x, self.y), (self.speed_xy, -self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                    if world_map.is_walkable((self.x, self.y), (-self.speed_xy, 0), (self.hitbox_width, self.hitbox_height)):
+                        self.x -= self.speed_xy
+                    if world_map.is_walkable((self.x, self.y), (0, -self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                        self.y -= self.speed_xy
+                if (W and D):
                     self.current_anim = anim.player_animations["run_Rside"]
-                    self.x += self.speed_xy
-                    self.y -= self.speed_xy
-                if (S and A) and world_map.is_walkable((self.x, self.y), (-self.speed_xy, self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                    if world_map.is_walkable((self.x, self.y), (self.speed_xy, 0), (self.hitbox_width, self.hitbox_height)):
+                        self.x += self.speed_xy
+                    if world_map.is_walkable((self.x, self.y), (0, -self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                        self.y -= self.speed_xy
+                if (S and A):
                     self.current_anim = anim.player_animations["run_Lside"]
-                    self.x -= self.speed_xy
-                    self.y += self.speed_xy
-                if (S and D) and world_map.is_walkable((self.x, self.y), (self.speed_xy, self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                    if world_map.is_walkable((self.x, self.y), (-self.speed_xy, 0), (self.hitbox_width, self.hitbox_height)):
+                        self.x -= self.speed_xy
+                    if world_map.is_walkable((self.x, self.y), (0, self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                        self.y += self.speed_xy
+                if (S and D):
                     self.current_anim = anim.player_animations["run_Rside"]
-                    self.x += self.speed_xy
-                    self.y += self.speed_xy
+                    if world_map.is_walkable((self.x, self.y), (self.speed_xy, 0), (self.hitbox_width, self.hitbox_height)):
+                        self.x += self.speed_xy
+                    if world_map.is_walkable((self.x, self.y), (0, self.speed_xy), (self.hitbox_width, self.hitbox_height)):
+                        self.y += self.speed_xy
     
             if not movexy[0] and movexy[1]:
                 if W and world_map.is_walkable((self.x, self.y), (0, -self.speed), (self.hitbox_width, self.hitbox_height)):
