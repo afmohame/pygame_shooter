@@ -22,5 +22,5 @@ class Character(Position):
         center = (position[0] + self.hitbox_width//2,  position[1] + self.hitbox_height//2)
         return center
 
-    def draw_char(self, surface, blit_image, x, y, camera):
+    def draw(self, surface, blit_image, x, y, camera):
         surface.blit(blit_image, (x - camera[0], y - camera[1]))

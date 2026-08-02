@@ -1,5 +1,7 @@
 import pygame as pg
 import math 
+import collision as coll
+import cte
 
 class Projectile:
     def __init__(self, proj_pos, proj, obj_pos, creation):
@@ -23,12 +25,16 @@ class Projectile:
             self.dir_x = dx/distance
             self.dir_y = dy/distance
     
-    def update_proj_pos(self):
-        self.x += self.dir_x*self.speed
-        self.y += self.dir_y*self.speed
-
-    def collision(self, enemy):
-        pass
-
-    def draw_proj(self, screen, img, camera = None):
+    def update_proj_pos(self, world, tile_size):
+        projectile_collision = coll.Collision()
+        x, y = (self.x + self.dir_x*self.speed), (self.y + self.dir_y*self.speed)
+        if 0 < x < world.world_width and 0 < y < world.world_height:
+            x, y = (self.x + self.dir_x*self.speed)//tile_size, (self.y + self.dir_y*self.speed)//tile_size
+            if world.world_map[int(y), int(x)] in range(0, 2):
+                self.x += self.dir_x*self.speed
+                self.y += self.dir_y*self.speed   
+                return projectile_collision.is_allowed(world.world_map, (self.x, self.y), (self.dir_x*self.speed, self.dir_y*self.speed), tile_size, self.proj_area)
+        return True
+        
+    def draw(self, screen, img, camera = None):
         screen.blit(img, (self.x, self.y))

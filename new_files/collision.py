@@ -24,16 +24,16 @@ class Collision:
             "br": self.convert_pos_to_tile(current_position, speed, tile_size, "br" ,hitbox_wh) #bottom right
         }
         #topleft
-        if world_map[future_hitbox["tl"][1], future_hitbox["tl"][0]] in range(2, 7):
+        if world_map[future_hitbox["tl"][1], future_hitbox["tl"][0]] in range(2, 8):
             return False
         #topright
-        if world_map[future_hitbox["tr"][1], future_hitbox["tr"][0]] in range(2, 7):
+        if world_map[future_hitbox["tr"][1], future_hitbox["tr"][0]] in range(2, 8):
             return False
         #bottomleft
-        if world_map[future_hitbox["bl"][1], future_hitbox["bl"][0]] in range(2, 7):
+        if world_map[future_hitbox["bl"][1], future_hitbox["bl"][0]] in range(2, 8):
             return False
         #bottomright
-        if world_map[future_hitbox["br"][1], future_hitbox["br"][0]] in range(2, 7):
+        if world_map[future_hitbox["br"][1], future_hitbox["br"][0]] in range(2, 8):
             return False
         
         return True

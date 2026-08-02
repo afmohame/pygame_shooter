@@ -46,6 +46,24 @@ def handling_events(events):
                 shoot = True
     return run, shoot
 
+def remove_projectile(projectile_list):
+    for proj in projectile_list.copy():
+                remove_proj = False
+                proj.draw(screen, anim.kogel)
+    
+                if not proj.update_proj_pos(world_map, cte.tile_size[0]):
+                    remove_proj = True
+    
+                #also needs to check collision with bot
+    
+                now = pg.time.get_ticks()
+                if now - proj.spawn_time >= proj.life_time:
+                    remove_proj = True
+    
+                if remove_proj:
+                    projectile_list.remove(proj)
+            #the same idea for ennemy list
+
 while run == True:
     clock.tick(cte.fps)
     screen.fill(0)
@@ -69,26 +87,23 @@ while run == True:
 
         #player.update_tile_pos()
         player.move(world_map)
-        world_map.draw_world(screen)
-        player.draw_char(screen, player.current_anim[frame], player.x, player.y, (0, 0))
+        world_map.draw(screen)
+        player.draw(screen, player.current_anim[frame], player.x, player.y, (0, 0))
 
         ### weapon ###
         weapons.update_mouse(pos_mouse)
         weapons.rotate_gun(cte.orbit, player.center_char((player.x, player.y)))
-        weapons.draw_weapon(screen, weapons.gun_img, weapons.rot_gun_screen)
+        weapons.draw(screen, weapons.gun_img, weapons.rot_gun_screen)
 
         if shoot:
             print("shoot him")
             weapons.shoot(pos_mouse, now)
-        
-        for proj in cte.list_of_player_projectile.copy():
-            proj.update_proj_pos()
-            proj.draw_proj(screen, anim.fireball)
 
-            now = pg.time.get_ticks()
-            if now - proj.spawn_time >= proj.life_time:
-                cte.list_of_player_projectile.remove(proj)
+        remove_projectile(cte.list_of_player_projectile)
+        remove_projectile(cte.list_of_enemy_projectile)
 
         pg.display.flip()
+
+        
 
 pg.quit()

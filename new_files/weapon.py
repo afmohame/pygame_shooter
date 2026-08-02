@@ -39,5 +39,5 @@ class Weapon():
         new_projectile = proj.Projectile(self.gun_center, self.gun['projectile'], mouse_pos, time)
         cte.list_of_player_projectile.append(new_projectile)
 
-    def draw_weapon(self, surface, img, position, camera = None):#moet draw zijn niet draw_weapon
+    def draw(self, surface, img, position, camera = None):#moet draw zijn niet draw_weapon
         surface.blit(img, (position[0], position[1]))

@@ -118,7 +118,7 @@ center_bot1 = (pos[0] + bot1_w_h[0]//2, pos[1] + bot1_w_h[1]//2)
 revolver = {
     "sprite_w_h": (22, 18), 
     "center": (22/2, 18/2), 
-    "projectile":{"damage": 3, "speed": 7, "life_time": 1600, "area": (6, 8), "type": "bullet"} # area: width, height
+    "projectile":{"damage": 3, "speed": 7, "life_time": 1000, "area": (8, 6), "type": "bullet"} # area: width, height
 }
 orbit = (40, 0)
 #-----------------------------------------------
@@ -128,7 +128,7 @@ fireball = {
     "damage": 2,
     "speed": 7,
     "area": (16, 16),
-    "life_time": 1600,
+    "life_time": 1100,
     "type": "fire magic",
 }
 guns_projectile = [revolver["projectile"], fireball]

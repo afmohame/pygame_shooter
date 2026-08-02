@@ -44,9 +44,11 @@ bot1_animations = {
                                       cte.bot1_hitbox_info["width"], cte.bot1_hitbox_info["height"], cte.scale, cte.black,
                                       cte.bot1_x_space, cte.bot1_y_space, cte.bot1_column_length),
 }
+###  BOT2  ###
 
 
 ### WEAPONS/PROJECTILES ###
 revolver = pg.image.load("sprites/images_chosen_for_game/revolver.png")
+kogel = pg.transform.rotate(pg.image.load("sprites/images_chosen_for_game/bullet1.png"), 90)
 
 fireball = pg.image.load("sprites/images_chosen_for_game/fireball.png")
