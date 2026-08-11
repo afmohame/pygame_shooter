@@ -1,8 +1,32 @@
 import pygame as pg
 import character as char
 import animation as anim
+import find_path as fp
 
-class enemy(char.Character):
-    def __init__(self, pos, char_stat, hitbox_info, scale, last_update):#last_update is temporary
-            super().__init__(pos, char_stat, hitbox_info, scale, last_update)
+class Enemy(char.Character):
+    def __init__(self, pos, bot_info, scale, last_update, last_atk, tile_size, current_anim):#last_update is temporary
+        super().__init__(pos, bot_info, scale, last_update)
+        self.atk = bot_info["attack"]
+        self.atk_type = bot_info["attack_type"]
+        self.atk_clown = bot_info["attack_cooldown"]
+        self.detection_range = bot_info["detection_range"]
+        self.attack_range = bot_info["attack_range"]
+        self.stop_chase_range = bot_info["stop_range"]
+        self.last_atk = last_atk
+        self.bot_state = "idle"
+        self.tile_size = tile_size
+        self.center = (self.x + self.hitbox_width//2, self.y + self.hitbox_height//2)
+        self.tile_pos = (int(self.center[0]//self.tile_size), int(self.center[1]//self.tile_size))
+        self.current_anim = current_anim
+        
+    def update_tile_pos(self):
+            self.center = (self.x + self.hitbox_width//2, self.y + self.hitbox_height//2)
+            self.tile_pos = (int(self.center[0]//self.tile_size), int(self.center[1]//self.tile_size))
+
+    def update_state(self, world_map, current_time):
+         Astar = fp.Find_path()
+
+    
+
+        
             

@@ -1,7 +1,7 @@
 import numpy as np #array[row, column] || column is vertical and row is horizontal
 import cte
 import pygame as pg
-import collision as coll
+import collision_world as coll
 
 class World:
     def __init__(self):
@@ -22,7 +22,7 @@ class World:
             }
         self.draw_tile = {0}
         self.world_map = np.full((self.world_dim[1], self.world_dim[0]), 1, dtype = int)
-        self.coll = coll.Collision()
+        self.coll = coll.Collision_world()
          
     def generate_world(self):
         self.world_map[1:-1, 0] = 3
@@ -46,7 +46,7 @@ class World:
     
     def is_walkable(self, current_position, speed, hitbox_wh):
         self.current_position = current_position
-        advance = self.coll.is_allowed(self.world_map, current_position, speed, self.tile_size, hitbox_wh)
+        advance = self.coll.is_allowed(self.world_map, current_position, speed, hitbox_wh)
         if not advance:
             return False
         if advance:

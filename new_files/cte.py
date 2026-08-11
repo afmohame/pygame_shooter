@@ -36,7 +36,7 @@ first_y, y_space = 0, 48
 scale = 2
 column_length = 255
 #animation_steps = 6 bcs there are 6 sprites for each, major, animation
-animation_info = {"scale": scale, "animation_steps": 6, "column_index": 0}
+animation_info = {"scale": scale, "frames": 6, "column_index": 0}
 
 #BOTS
 animation_moves_enemies = {
@@ -46,9 +46,33 @@ animation_moves_enemies = {
     "left": 0, 
     "right": 0}
 bot1_animation_info = {
-    "scale": scale, 
-    "animation_steps": 5, 
-    "column_index": 0}
+    "idle": {
+        "frames": 6,
+        "x_space": 32,
+        "sprite": (12, 17),
+        "first_x": 0,
+        "first_y": 0,
+        "sheet_width": 172
+    },
+
+    "walking": {
+        "frames": 8,
+        "x_space": 32,
+        "sprite": (13,19),
+        "first_x": 0,
+        "first_y": 0,
+        "sheet_width": 256
+    },
+
+    "attack": {
+        "frames": 5,
+        "x_space": 31,
+        "sprite": (15,18),
+        "first_x": 0,
+        "first_y": 0,
+        "sheet_width": 144
+    }
+}
 states = {"idle": 0, "attack": 1, "chase": 2, "dead": 3, "alerted": 4} #idlesheet, attacksheet, chasesheet, deadsheet
 
 bot1_column_length = 144
@@ -59,58 +83,44 @@ bot1_fy, bot1_y_space = 0, 0
 # player
 #-----------------------------------------------
 pos = (60, 60)
-char_stat = {
+player_info = {
     "hp": 30,
     "defense": 10,
     "speed": 4,
     "speed_xy": 4/math.sqrt(2),
     "stamina": 100,
+    "hitbox": (11, 22),
+    "sprite": (14, 21),
 }
 
-hitbox_info = {
-    "width": 11,
-    "height": 22,
-    "color": (255, 0, 0),
-}
-
-sprite_info = {
-    "width": 14,
-    "height": 21,
-}
-sprite_w_h = (sprite_info["width"]*scale, sprite_info["height"]*scale)
+sprite_w_h = (player_info["sprite"][0]*scale, player_info["sprite"][1]*scale)
 center_char = (pos[0] + sprite_w_h[0]//2, pos[1] + sprite_w_h[1]//2)
 
 #-----------------------------------------------
 # enemies
 #-----------------------------------------------
-bot_pos = (60, 60)#temporary
-speed_bot1 = 3
-last_atk = 0
-bot1_stats = {
+bot_pos = (200, 200)#temporary
+last_atk_bot1 = 0
+bot1_info = {
     "hp": 10,
     "attack": 1,
     "attack_type": "magic bullet",
     "defense": 15,
-    "speed": speed_bot1,
-    "speed_xy": speed_bot1/math.sqrt(2),
+    "speed": 3,
+    "speed_xy": 3/math.sqrt(2),
     "detection_range": 900,
     "attack_cooldown": 200,
     "attack_range": 410,
-    "stop_range": 170
-}
-
-bot1_hitbox_info = {
-    "width": 17,
-    "height": 19,
+    "stop_range": 170,
+    "hitbox": (12,19),
     "color": (255, 0, 0),
+    "sprite": (32, 32)
+
 }
 
-bot1_sprite_info = {
-    "width": 17,
-    "height": 18,
-}
-bot1_w_h = (bot1_sprite_info["width"]*scale, bot1_sprite_info["height"]*scale)
+bot1_w_h = (bot1_info["sprite"][0]*scale, bot1_info["sprite"][1]*scale)
 center_bot1 = (pos[0] + bot1_w_h[0]//2, pos[1] + bot1_w_h[1]//2)
+
 
 #-----------------------------------------------
 # guns

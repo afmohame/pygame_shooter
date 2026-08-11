@@ -3,6 +3,7 @@ import animation as anim
 import math 
 import projectile as proj
 import cte 
+import rotate_img as rimg
 
 class Weapon():
     def __init__(self, pos, img, gun, char_pos): #adding drop_rate, rarity, radius, ricochet,
@@ -34,10 +35,12 @@ class Weapon():
         self.gun_center = (center_char[0] + rott_offset_x, center_char[1] + rott_offset_y)
 
         self.rot_gun_screen = self.gun_img.get_rect(center=self.gun_center)
-
+        #self.rotated_gun = rimg.rotate_image(self.gun_img, angle, orbit, center_char)
+        #might be implemented later
+        
     def shoot(self, mouse_pos, time):
-        new_projectile = proj.Projectile(self.gun_center, self.gun['projectile'], mouse_pos, time)
-        cte.list_of_player_projectile.append(new_projectile)
+            new_projectile = proj.Projectile(self.gun_center, self.gun['projectile'], mouse_pos, time)
+            cte.list_of_player_projectile.append(new_projectile)
 
     def draw(self, surface, img, position, camera = None):#moet draw zijn niet draw_weapon
         surface.blit(img, (position[0], position[1]))

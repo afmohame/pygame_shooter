@@ -1,7 +1,10 @@
 import pygame as pg
 import math 
-import collision as coll
+import collision_world as coll
 import cte
+import collision_proj as coll_proj
+import rotate_img as rimg
+import convert_to_tiles as ctt
 
 class Projectile:
     def __init__(self, proj_pos, proj, obj_pos, creation):
@@ -25,16 +28,24 @@ class Projectile:
             self.dir_x = dx/distance
             self.dir_y = dy/distance
     
-    def update_proj_pos(self, world, tile_size):
-        projectile_collision = coll.Collision()
+    def update_proj_pos(self, world):
+        projectile_collision = coll.Collision_world()
         x, y = (self.x + self.dir_x*self.speed), (self.y + self.dir_y*self.speed)
         if 0 < x < world.world_width and 0 < y < world.world_height:
-            x, y = (self.x + self.dir_x*self.speed)//tile_size, (self.y + self.dir_y*self.speed)//tile_size
-            if world.world_map[int(y), int(x)] in range(0, 2):
+            tile_xy = ctt.to_tiles((self.x + self.dir_x*self.speed), (self.y + self.dir_y*self.speed))
+            if world.world_map[tile_xy[1], tile_xy[0]] in range(0, 2):
                 self.x += self.dir_x*self.speed
                 self.y += self.dir_y*self.speed   
-                return projectile_collision.is_allowed(world.world_map, (self.x, self.y), (self.dir_x*self.speed, self.dir_y*self.speed), tile_size, self.proj_area)
+                return projectile_collision.is_allowed(world.world_map, (self.x, self.y), (self.dir_x*self.speed, self.dir_y*self.speed), self.proj_area)
         return True
+
+    def rotate_projectile(self):
+        rot_proj = rimg.Rotate()
+
+    def collision_char(self, char_pos, char_hitbox):
+        collision = coll_proj.Collision_proj()
+        return collision.is_allowed((self.x, self.y), char_pos, self.proj_area, char_hitbox)
+
         
     def draw(self, screen, img, camera = None):
         screen.blit(img, (self.x, self.y))
