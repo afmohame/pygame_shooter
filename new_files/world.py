@@ -53,7 +53,7 @@ class World:
             return True
         
 
-    def draw(self, surface, camera = (0, 0)):
+    def draw(self, surface, camera):
         row_indx, column_indx = 0, 0
         for row in self.world_map:
             for column in row:

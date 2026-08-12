@@ -35,7 +35,7 @@ class Projectile:
             tile_xy = ctt.to_tiles((self.x + self.dir_x*self.speed), (self.y + self.dir_y*self.speed))
             if world.world_map[tile_xy[1], tile_xy[0]] in range(0, 2):
                 self.x += self.dir_x*self.speed
-                self.y += self.dir_y*self.speed   
+                self.y += self.dir_y*self.speed
                 return projectile_collision.is_allowed(world.world_map, (self.x, self.y), (self.dir_x*self.speed, self.dir_y*self.speed), self.proj_area)
         return True
 
@@ -47,5 +47,5 @@ class Projectile:
         return collision.is_allowed((self.x, self.y), char_pos, self.proj_area, char_hitbox)
 
         
-    def draw(self, screen, img, camera = None):
-        screen.blit(img, (self.x, self.y))
+    def draw(self, screen, img, camera):
+        screen.blit(img, (self.x - camera[0], self.y - camera[1]))

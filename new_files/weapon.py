@@ -13,8 +13,9 @@ class Weapon():
         self.gun = gun
         self.gun_center = pos
 
-    def update_mouse(self, pos):
-        self.mx, self.my = pos[0], pos[1]
+    def update_mouse(self, pos, camera):
+        self.mx, self.my = pos[0]+ camera[0], pos[1] + camera[1]
+        #screen = world - camera ==> world = screen + camera
     
     def rotate_gun(self, orbit, center_char):
         dx, dy = self.mx - center_char[0], self.my - center_char[1]
@@ -38,9 +39,10 @@ class Weapon():
         #self.rotated_gun = rimg.rotate_image(self.gun_img, angle, orbit, center_char)
         #might be implemented later
         
-    def shoot(self, mouse_pos, time):
+    def shoot(self, mouse_pos, time, camera):
+            mouse_pos = (mouse_pos[0] + camera[0], mouse_pos[1] + camera[1])
             new_projectile = proj.Projectile(self.gun_center, self.gun['projectile'], mouse_pos, time)
             cte.list_of_player_projectile.append(new_projectile)
 
-    def draw(self, surface, img, position, camera = None):#moet draw zijn niet draw_weapon
-        surface.blit(img, (position[0], position[1]))
+    def draw(self, surface, img, camera):#moet draw zijn niet draw_weapon
+        surface.blit(img, (self.rot_gun_screen[0] - camera[0], self.rot_gun_screen[1] - camera[1]))
