@@ -1,15 +1,20 @@
 import pygame as pg
 import math 
 import collision_world as coll
-import cte
+import animation as anim
 import collision_proj as coll_proj
 import rotate_img as rimg
 import convert_to_tiles as ctt
 
 class Projectile:
     def __init__(self, proj_pos, proj, obj_pos, creation):
+        if proj["type"] == "fire magic":
+            self.image = anim.fireball
+                
+        if proj["type"] == "bullet":
+            self.image = anim.kogel
+
         self.x, self.y = proj_pos[0], proj_pos[1]
-        self.proj_type = proj["type"]
         self.proj_area = proj["area"]#beter naam zoeken, maar dit is eigenlijk de hitbox ervan
         self.damage = proj["damage"]
         self.speed = proj["speed"]

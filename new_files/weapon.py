@@ -6,12 +6,13 @@ import cte
 import rotate_img as rimg
 
 class Weapon():
-    def __init__(self, pos, img, gun, char_pos): #adding drop_rate, rarity, radius, ricochet,
+    def __init__(self, pos, img, gun, proj_img): #adding drop_rate, rarity, radius, ricochet,
         self.x, self.y = pos[0], pos[1] #position of what?
         self.mx, self.my = 0, 0
         self.img = img
         self.gun = gun
         self.gun_center = pos
+        self.proj_img = proj_img
 
     def update_mouse(self, pos, camera):
         self.mx, self.my = pos[0]+ camera[0], pos[1] + camera[1]

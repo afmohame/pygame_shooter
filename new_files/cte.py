@@ -109,12 +109,13 @@ bot1_info = {
     "speed": 3,
     "speed_xy": 3/math.sqrt(2),
     "detection_range": 900,
-    "attack_cooldown": 200,
+    "attack_cooldown": 600,
     "attack_range": 410,
     "stop_range": 170,
     "hitbox": (12,19),
     "color": (255, 0, 0),
-    "sprite": (32, 32)
+    "sprite": (32, 32),
+    "projectile": {"damage": 2, "speed": 7, "life_time": 1100, "area": (16, 16), "type": "fire magic"}
 
 }
 
@@ -146,7 +147,7 @@ guns_projectile = [revolver["projectile"], fireball]
 #-----------------------------------------------
 # world
 #-----------------------------------------------
-world_dim = (10, 10)#world_dim = (60, 50)
+world_dim = (30, 20)#world_dim = (60, 50)
 tile_size = (55, 55)
 
 floor = pg.transform.scale(pg.image.load("sprites/images_chosen_for_game/Dungeon_Tileset/06_Dungeon_Tileset.png"), tile_size)

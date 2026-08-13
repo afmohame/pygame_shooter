@@ -21,7 +21,7 @@ max_enemies = 13
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 player = player.Player(cte.pos, cte.player_info, cte.scale, cte.last_update_player, cte.tile_size[0], anim.player_animations["idle"])
-bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"])
+bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"], anim.fireball)
 world_map = world.World()
 world_map.generate_world()
 cam = camera.Camera(cte.camera_pos) 
@@ -32,7 +32,6 @@ objects = [world_map, player, weapons, bot]
 draw_list = [world_map, player, weapons, bot]
 ennemy_list = []
 char_list = [player]
-
 def handling_events(events):
     run = True
     shoot = False
@@ -52,8 +51,8 @@ def handling_events(events):
 def remove_projectile(projectile_list):
     for proj in projectile_list.copy():
         remove_proj = False
-        if world_map.world_map[int(proj.y//cte.tile_size[0]), int(proj.x//cte.tile_size[0])] not in range(2, 8): 
-            proj.draw(screen, anim.kogel, cam.camera_pos) 
+        if world_map.world_map[int(proj.y//cte.tile_size[0]), int(proj.x//cte.tile_size[0])] not in range(2, 8):
+            proj.draw(screen, proj.image, cam.camera_pos)
             #will have to go for testing 
         pg.draw.rect( screen, "blue", ( proj.x - cam.camera_pos[0], proj.y - cam.camera_pos[1], proj.proj_area[0], proj.proj_area[1] ), 2 ) #will have to go for testing
 
@@ -88,10 +87,10 @@ def spawn():
             last_spawn = now
             choose = random.randint(1, 3)
             if choose == 1:
-                bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"])
+                bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"], anim.fireball)
                 bot.spawn_bot(world_map)
                 ennemy_list.append(bot)
-                print(f"the length of enemy list is: {len(ennemy_list)}")
+                #print(f"the length of enemy list is: {len(ennemy_list)}")
             if choose == 2:
                 pass
             if choose == 3:
@@ -116,12 +115,17 @@ while run == True:
         for i in ennemy_list:
             if i not in char_list:
                 char_list.append(i)
-        cam.update_camera(player.center, (cte.screen_w, cte.screen_h), cte.world_dim, cte.tile_size[0])
+
         world_map.draw(screen, cam.camera_pos)
         player.move(world_map)
-        
+        cam.update_camera(player.center, (cte.screen_w, cte.screen_h), cte.world_dim, cte.tile_size[0])
+
         ### Bots ###
         spawn()
+        if len(ennemy_list) > 0: 
+            for i in ennemy_list:
+                i.update_state(player, world_map, now, cte.bot1_info["projectile"])
+
         ### Bots and player ###
         if now - last_update_main >= anim_cooldown:
             last_update_main = now

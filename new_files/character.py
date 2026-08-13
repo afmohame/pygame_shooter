@@ -1,6 +1,7 @@
 import pygame as pg
 import animation as anim
 import cte
+import world
 
 class Position():
     def __init__(self, x, y):
@@ -33,6 +34,11 @@ class Character(Position):
         self.hp -= atk
         print(f"his live is {self.hp}")
 
+    def move_allowed(self, world, speed):
+        if world.is_walkable((self.x, self.y), speed, (self.hitbox_width, self.hitbox_height)):
+            return True
+        return False
+    
     def dead(self):
         if self.hp <= 0:
             return True
