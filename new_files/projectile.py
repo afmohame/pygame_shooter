@@ -53,4 +53,5 @@ class Projectile:
 
         
     def draw(self, screen, img, camera):
-        screen.blit(img, (self.x - camera[0], self.y - camera[1]))
+        if img is not None:
+            screen.blit(img, (self.x - camera[0], self.y - camera[1]))

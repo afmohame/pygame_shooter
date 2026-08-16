@@ -21,15 +21,15 @@ max_enemies = 13
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 player = player.Player(cte.pos, cte.player_info, cte.scale, cte.last_update_player, cte.tile_size[0], anim.player_animations["idle"])
-bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"], anim.fireball)
+bot = 0
 world_map = world.World()
 world_map.generate_world()
 cam = camera.Camera(cte.camera_pos) 
 start_menu = menu.Menu()
-weapons = weapon.Weapon((5, 5), anim.revolver, cte.revolver, cte.pos) #mouse pos in init is dumb
-objects = [world_map, player, weapons, bot]
+weapons = weapon.Weapon((1, 1), anim.revolver, cte.revolver, cte.pos) #mouse pos in init is dumb
+objects = [world_map, player, weapons]
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-draw_list = [world_map, player, weapons, bot]
+draw_list = [world_map, player, weapons]
 ennemy_list = []
 char_list = [player]
 def handling_events(events):
@@ -50,50 +50,59 @@ def handling_events(events):
 
 def remove_projectile(projectile_list):
     for proj in projectile_list.copy():
-        remove_proj = False
-        if world_map.world_map[int(proj.y//cte.tile_size[0]), int(proj.x//cte.tile_size[0])] not in range(2, 8):
-            proj.draw(screen, proj.image, cam.camera_pos)
-            #will have to go for testing 
-        pg.draw.rect( screen, "blue", ( proj.x - cam.camera_pos[0], proj.y - cam.camera_pos[1], proj.proj_area[0], proj.proj_area[1] ), 2 ) #will have to go for testing
+        if proj.image is not None:
+            remove_proj = False
+            if world_map.world_map[int(proj.y//cte.tile_size[0]), int(proj.x//cte.tile_size[0])] not in range(2, 8):
+                proj.draw(screen, proj.image, cam.camera_pos)
+                #will have to go for testing 
+            #pg.draw.rect( screen, "blue", ( proj.x - cam.camera_pos[0], proj.y - cam.camera_pos[1], proj.proj_area[0], proj.proj_area[1] ), 2 ) #will have to go for testing
 
-        if not proj.update_proj_pos(world_map):
-            remove_proj = True
-
-        # enemy bullet
-        if projectile_list is cte.list_of_enemy_projectile:
-            if proj.collision_char((player.x, player.y), (player.hitbox_width, player.hitbox_height)):
-                player.take_damage(proj.damage)
+            if not proj.update_proj_pos(world_map):
                 remove_proj = True
 
-        # player bullet
-        elif projectile_list is cte.list_of_player_projectile:
-            for bot in ennemy_list:
-                if proj.collision_char((bot.x, bot.y), (bot.hitbox_width, bot.hitbox_height)):
-                    bot.take_damage(proj.damage)
+            # enemy bullet
+            if projectile_list is cte.list_of_enemy_projectile:
+                if proj.collision_char((player.x, player.y), (player.hitbox_width, player.hitbox_height)):
+                    player.take_damage(proj.damage)
                     remove_proj = True
-                    break
 
-        if pg.time.get_ticks() - proj.spawn_time >= proj.life_time:
-            remove_proj = True
+            # player bullet
+            elif projectile_list is cte.list_of_player_projectile:
+                for bot in ennemy_list:
+                    if proj.collision_char((bot.x, bot.y), (bot.hitbox_width, bot.hitbox_height)):
+                        bot.take_damage(proj.damage)
+                        remove_proj = True
+                        break
 
-        if remove_proj:
-            projectile_list.remove(proj)
-            #the same idea for ennemy list
+            if pg.time.get_ticks() - proj.spawn_time >= proj.life_time:
+                remove_proj = True
+
+            if remove_proj:
+                projectile_list.remove(proj)
+                #the same idea for ennemy list
+
+
+
 
 def spawn():
     global last_spawn 
-    if len(ennemy_list) <= max_enemies:
+    if len(ennemy_list) < max_enemies:#max_enemies:
         if now - last_spawn >= spawn_cooldown:
             last_spawn = now
-            choose = random.randint(1, 3)
-            if choose == 1:
-                bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"], anim.fireball)
+            #p = 1 
+            p = random.randint(0, 100)
+            if 0 <= p < 45:#110 <= p < 148:
+                bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"], anim.fireball,
+                                  anim.bot1_animations)
                 bot.spawn_bot(world_map)
                 ennemy_list.append(bot)
                 #print(f"the length of enemy list is: {len(ennemy_list)}")
-            if choose == 2:
-                pass
-            if choose == 3:
+            if  48 <= p < 75:#p == 1: #48 <= p < 79:
+                bot = enemy.Enemy(cte.bot_pos, cte.bot2_info, cte.scale, cte.last_update_bot1, cte.last_update_bot1, cte.tile_size[0], anim.bot2_animations["idle"], None, 
+                                  anim.bot2_animations)
+                bot.spawn_bot(world_map)
+                ennemy_list.append(bot)
+            if 79 <= p < 100:
                 pass
             
 while run == True:
@@ -135,7 +144,11 @@ while run == True:
                     char.frame = 0
 
         for char in char_list.copy():
-            char.draw(screen, char.current_anim[char.frame], cam.camera_pos)
+            if char in ennemy_list:
+                turned_img = char.turn_sprite(player.center)
+                char.draw(screen, turned_img, cam.camera_pos)
+            else:
+                char.draw(screen, char.current_anim[char.frame], cam.camera_pos)
             char.update_tile_pos()
             char.update_center_char()
             if char.dead():
@@ -144,6 +157,22 @@ while run == True:
                 elif char in ennemy_list: #, bot2, bot3):
                     ennemy_list.remove(char)
                     char_list.remove(char)
+
+            if char is not player:
+                pg.draw.rect(
+                    screen,
+                    "red",
+                    (
+                        char.x + char.hitbox_offset_x - cam.camera_pos[0],
+                        char.y + char.hitbox_offset_y - cam.camera_pos[1],
+                        char.hitbox_width,
+                        char.hitbox_height
+                    ),
+                    2
+                )
+
+            char.update_tile_pos()
+            char.update_center_char()
             
 
         ### weapon ###
@@ -156,35 +185,7 @@ while run == True:
 
         remove_projectile(cte.list_of_player_projectile)
         remove_projectile(cte.list_of_enemy_projectile)
-
-        #will have to go for testing
-
-        # PLAYER HITBOX
-        pg.draw.rect(
-            screen,
-            "green",
-            (
-                player.x - cam.camera_pos[0],
-                player.y - cam.camera_pos[1],
-                player.hitbox_width,
-                player.hitbox_height
-            ),
-            2
-        )
-
-        # BOT HITBOX
-        pg.draw.rect(
-            screen,
-            "red",
-            (
-                bot.x - cam.camera_pos[0],
-                bot.y - cam.camera_pos[1],
-                bot.hitbox_width,
-                bot.hitbox_height
-            ),
-            2
-        )
-        #will have to go for testing
+        
         pg.display.flip()
 
         
