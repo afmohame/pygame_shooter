@@ -26,10 +26,7 @@ class Enemy(char.Character):
         self.anim = animations
         self.current_anim_name = "idle"
         
-    def update_tile_pos(self):
-            self.center = (self.x + self.hitbox_offset_x + self.hitbox_width//2, self.y + self.hitbox_offset_y + self.hitbox_height//2)
-            self.tile_pos = (int(self.center[0]//self.tile_size), int(self.center[1]//self.tile_size))
-
+    
     def spawn_bot(self, world):
          spawn_it = False
          while not spawn_it:

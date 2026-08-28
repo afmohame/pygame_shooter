@@ -36,7 +36,6 @@ class Character(Position):
 
     def take_damage(self, atk):
         self.hp -= atk
-        print(f"his live is {self.hp}")
 
     def move_allowed(self, world, speed):
         if world.is_walkable((self.x + self.hitbox_offset_x, self.y + self.hitbox_offset_y), speed, 

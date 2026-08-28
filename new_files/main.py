@@ -21,7 +21,6 @@ max_enemies = 13
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 player = player.Player(cte.pos, cte.player_info, cte.scale, cte.last_update_player, cte.tile_size[0], anim.player_animations["idle"])
-bot = 0
 world_map = world.World()
 world_map.generate_world()
 cam = camera.Camera(cte.camera_pos) 
@@ -54,9 +53,7 @@ def remove_projectile(projectile_list):
             remove_proj = False
             if world_map.world_map[int(proj.y//cte.tile_size[0]), int(proj.x//cte.tile_size[0])] not in range(2, 8):
                 proj.draw(screen, proj.image, cam.camera_pos)
-                #will have to go for testing 
-            #pg.draw.rect( screen, "blue", ( proj.x - cam.camera_pos[0], proj.y - cam.camera_pos[1], proj.proj_area[0], proj.proj_area[1] ), 2 ) #will have to go for testing
-
+                
             if not proj.update_proj_pos(world_map):
                 remove_proj = True
 
@@ -79,25 +76,23 @@ def remove_projectile(projectile_list):
 
             if remove_proj:
                 projectile_list.remove(proj)
-                #the same idea for ennemy list
 
 
 
 
 def spawn():
     global last_spawn 
-    if len(ennemy_list) < max_enemies:#max_enemies:
+    if len(ennemy_list) < max_enemies:
         if now - last_spawn >= spawn_cooldown:
             last_spawn = now
-            #p = 1 
             p = random.randint(0, 100)
-            if 0 <= p < 45:#110 <= p < 148:
+
+            if 0 <= p < 45:
                 bot = enemy.Enemy(cte.bot_pos, cte.bot1_info, cte.scale, cte.last_update_bot1, cte.last_atk_bot1, cte.tile_size[0], anim.bot1_animations["idle"], anim.fireball,
                                   anim.bot1_animations)
                 bot.spawn_bot(world_map)
                 ennemy_list.append(bot)
-                #print(f"the length of enemy list is: {len(ennemy_list)}")
-            if  48 <= p < 75:#p == 1: #48 <= p < 79:
+            if  48 <= p < 75:
                 bot = enemy.Enemy(cte.bot_pos, cte.bot2_info, cte.scale, cte.last_update_bot1, cte.last_update_bot1, cte.tile_size[0], anim.bot2_animations["idle"], None, 
                                   anim.bot2_animations)
                 bot.spawn_bot(world_map)
@@ -154,23 +149,10 @@ while run == True:
             if char.dead():
                 if char is player:
                     run = False
-                elif char in ennemy_list: #, bot2, bot3):
+                elif char in ennemy_list:
                     ennemy_list.remove(char)
                     char_list.remove(char)
-
-            if char is not player:
-                pg.draw.rect(
-                    screen,
-                    "red",
-                    (
-                        char.x + char.hitbox_offset_x - cam.camera_pos[0],
-                        char.y + char.hitbox_offset_y - cam.camera_pos[1],
-                        char.hitbox_width,
-                        char.hitbox_height
-                    ),
-                    2
-                )
-
+                    
             char.update_tile_pos()
             char.update_center_char()
             
@@ -180,7 +162,6 @@ while run == True:
         weapons.rotate_gun(cte.orbit, player.center)
         weapons.draw(screen, weapons.gun_img, cam.camera_pos)
         if shoot:
-            print("shoot him")
             weapons.shoot(pos_mouse, now, cam.camera_pos)
 
         remove_projectile(cte.list_of_player_projectile)
